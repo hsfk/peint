@@ -6,25 +6,44 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons, unit2;
+  StdCtrls, Buttons, Menus, ExtDlgs, unit2;
 
 type
 
   { TForm1 }
 
+  BrushStyle = record
+    Name : string;
+    Style : TBrushStyle;
+  end;
+
   TForm1 = class(TForm)
-    button1: TButton;
-    Button2: TButton;
+    ComboBox1: TComboBox;
+    IncButton: TButton;
+    DecButton: TButton;
     ColorDialog1: TColorDialog;
     Edit1: TEdit;
+    MainMenu1: TMainMenu;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    OpenPictureDialog1: TOpenPictureDialog;
     PaintBox1: TPaintBox;
     Panel1: TPanel;
     Panel2: TPanel;
+    SavePictureDialog1: TSavePictureDialog;
     Shape1: TShape;
     Shape2: TShape;
     procedure Button1Click(Sender: TObject);
+    procedure ComboBox1Select(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
     procedure Edit1EditingDone(Sender: TObject);
+    procedure IncButtonClick(Sender: TObject);
+    procedure setstyles();
+    procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
     procedure ObjectMove(Obj : twincontrol; px,py,x,y : integer);
     procedure Panel1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -56,6 +75,7 @@ var
   isDrawing,isMoving : boolean;
   px,py,cx,cy : integer;
   tool : main;
+  BrushStyles : array of BrushStyle;
 
 implementation
 
@@ -88,6 +108,11 @@ tool.free;
  tool := classref[tbutton(sender).tag].instrument.create(holst);
 end;
 
+procedure TForm1.ComboBox1Select(Sender: TObject);
+begin
+ holst.canvas.brush.Style:=brushstyles[combobox1.ItemIndex].Style;
+end;
+
 procedure TForm1.Edit1Change(Sender: TObject);
 begin
   if (edit1.text = '') OR (strtoint(edit1.text) < 1) then
@@ -99,6 +124,30 @@ end;
 procedure TForm1.Edit1EditingDone(Sender: TObject);
 begin
   holst.Canvas.pen.width := strtoint(edit1.text);
+end;
+
+procedure TForm1.IncButtonClick(Sender: TObject);
+begin
+   Edit1.text := inttostr(strtoint(edit1.text) + tbutton(sender).Tag);
+   Edit1EditingDone(edit1);
+end;
+
+procedure TForm1.MenuItem2Click(Sender: TObject);
+begin
+  if SavePictureDialog1.execute then
+    holst.SaveToFile(SavePictureDialog1.filename);
+end;
+
+procedure TForm1.MenuItem3Click(Sender: TObject);
+begin
+  halt;
+end;
+
+procedure TForm1.MenuItem4Click(Sender: TObject);
+begin
+  if OpenPictureDialog1.execute then
+     holst.LoadFromFile(OpenPictureDialog1.FileName);
+  paintbox1.Invalidate;
 end;
 
 
@@ -180,6 +229,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
     holst := tbitmap.Create;
     setbuttons();
+    setStyles();
     tool := pen.create(holst);
     holst.Width := paintbox1.width;
     holst.Height := paintbox1.Height;
@@ -205,6 +255,24 @@ procedure TForm1.PaintBox1MouseUp(Sender: TObject; Button: TMouseButton;
 begin
    isDrawing:=FALSE;
 end;
+procedure Tform1.setStyles();
+var i : integer;
+begin
+  for i := 0 to high(BrushStyles) do begin
+    combobox1.Items.Add(brushstyles[i].name);
+  end;
+end;
 
+procedure initializestyle(NM : string;STL : TBrushStyle);
+begin
+  setlength(BrushStyles, length(BrushStyles) + 1);
+  with BrushStyles[high(BrushStyles)] do begin
+    name := nm;
+    style := stl;
+  end;
+end;
+   initialization
+   initializestyle('Horizontal',bsHorizontal);
+   initializestyle('Solid',bsSolid);
 end.
 
