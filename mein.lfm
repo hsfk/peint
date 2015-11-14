@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 251
+  Left = 150
   Height = 449
-  Top = 270
+  Top = 611
   Width = 671
   Caption = 'MainForm'
   ClientHeight = 429
@@ -113,6 +113,15 @@ object MainForm: TMainForm
       TabOrder = 3
     end
   end
+  object CTRLZButton: TButton
+    Left = 484
+    Height = 24
+    Top = 61
+    Width = 64
+    Caption = 'ZButton'
+    OnClick = CTRLZButtonClick
+    TabOrder = 2
+  end
   object ColorDialog: TColorDialog
     Color = clBlack
     CustomColors.Strings = (
@@ -143,7 +152,7 @@ object MainForm: TMainForm
   object MainMenu: TMainMenu
     left = 328
     top = 352
-    object MenuItem1: TMenuItem
+    object FileItem: TMenuItem
       Caption = 'Файл'
       object OpenAs: TMenuItem
         Caption = 'Открыть ...'
