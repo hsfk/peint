@@ -62,17 +62,18 @@
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="UHistory.pas"/>
+        <Filename Value="UToolsManager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="UToolsManager.pas"/>
+        <Filename Value="uscrollbar.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="UScrollBar"/>
       </Unit7>
       <Unit8>
-        <Filename Value="uspectools.pas"/>
+        <Filename Value="ufigurehistorymanager.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="USpecTools"/>
+        <UnitName Value="UFigureHistoryManager"/>
       </Unit8>
     </Units>
   </ProjectOptions>

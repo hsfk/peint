@@ -1,14 +1,14 @@
 object MainForm: TMainForm
-  Left = 150
-  Height = 449
-  Top = 611
+  Left = 132
+  Height = 452
+  Top = 214
   Width = 671
   Caption = 'MainForm'
-  ClientHeight = 429
+  ClientHeight = 432
   ClientWidth = 671
   Menu = MainMenu
   OnCreate = FormCreate
-  LCLVersion = '1.4.2.0'
+  LCLVersion = '1.4.4.0'
   object PaintBox: TPaintBox
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -17,7 +17,7 @@ object MainForm: TMainForm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 429
+    Height = 432
     Top = 0
     Width = 671
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -34,11 +34,13 @@ object MainForm: TMainForm
     AnchorSideBottom.Side = asrBottom
     Left = 591
     Height = 240
-    Top = -5
+    Top = 0
     Width = 80
     Anchors = []
     BevelOuter = bvNone
+    BorderWidth = 1
     BorderStyle = bsSingle
+    ParentColor = False
     TabOrder = 0
     OnMouseDown = ToolsPanelMouseDown
     OnMouseMove = ToolsPanelMouseMove
@@ -47,7 +49,7 @@ object MainForm: TMainForm
   object OptionsPanel: TPanel
     Left = 591
     Height = 136
-    Top = 232
+    Top = 240
     Width = 80
     BevelOuter = bvNone
     BorderStyle = bsSingle
@@ -60,23 +62,23 @@ object MainForm: TMainForm
     object PenColor: TShape
       Left = 16
       Height = 33
-      Top = 16
+      Top = 8
       Width = 32
       Brush.Color = clBlack
-      OnMouseDown = PenColorMouseDown
+      OnMouseDown = ShapeColorMouseDown
     end
     object BrushColor: TShape
       Left = 32
       Height = 33
-      Top = 32
+      Top = 24
       Width = 32
-      OnMouseDown = PenColorMouseDown
+      OnMouseDown = ShapeColorMouseDown
     end
     object LineWidth: TEdit
       Left = 32
       Height = 23
-      Top = 73
-      Width = 34
+      Top = 64
+      Width = 32
       NumbersOnly = True
       OnChange = LineWidthChange
       OnEditingDone = LineWidthEditingDone
@@ -87,7 +89,7 @@ object MainForm: TMainForm
       Tag = 1
       Left = 16
       Height = 13
-      Top = 72
+      Top = 64
       Width = 16
       Caption = '▲'
       OnClick = IncButtonClick
@@ -97,30 +99,39 @@ object MainForm: TMainForm
       Tag = -1
       Left = 16
       Height = 13
-      Top = 85
+      Top = 74
       Width = 16
       Caption = '▼'
       OnClick = IncButtonClick
       TabOrder = 2
     end
     object BrushStyleCbox: TComboBox
-      Left = 15
+      Left = 7
       Height = 23
-      Top = 103
-      Width = 49
+      Top = 96
+      Width = 65
       ItemHeight = 15
       OnSelect = BrushStyleCboxSelect
       TabOrder = 3
     end
   end
-  object CTRLZButton: TButton
-    Left = 484
-    Height = 24
-    Top = 61
-    Width = 64
-    Caption = 'ZButton'
-    OnClick = CTRLZButtonClick
+  object Size: TButton
+    Left = 512
+    Height = 33
+    Top = 64
+    Width = 32
+    Caption = 'X2'
+    OnClick = SizeClick
     TabOrder = 2
+  end
+  object Size2: TButton
+    Left = 552
+    Height = 33
+    Top = 64
+    Width = 32
+    Caption = 'X0.5'
+    OnClick = Size2Click
+    TabOrder = 3
   end
   object ColorDialog: TColorDialog
     Color = clBlack
@@ -162,9 +173,26 @@ object MainForm: TMainForm
         Caption = 'Сохранить как ...'
         OnClick = SaveAsClick
       end
+      object Export: TMenuItem
+        Caption = 'Экспортировать'
+        OnClick = ExportClick
+      end
       object CloseProgram: TMenuItem
         Caption = 'Выход'
         OnClick = CloseProgramClick
+      end
+    end
+    object EditMenu: TMenuItem
+      Caption = 'Правка'
+      object Undo: TMenuItem
+        Caption = 'Undo (Ctrl + Z)'
+        ShortCut = 16474
+        OnClick = UndoClick
+      end
+      object Redo: TMenuItem
+        Caption = 'Redo (Ctrl + Y)'
+        ShortCut = 16473
+        OnClick = RedoClick
       end
     end
   end

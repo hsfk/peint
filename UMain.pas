@@ -7,16 +7,11 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, Buttons, Menus, ExtDlgs, UTools, UZoom, UPalette,
-  UObjectMove, UHistory, UToolsPanel, UToolsManager;
+  UObjectMove, UToolsPanel, UToolsManager, UScrollBar,UFigureHistoryManager;
 
 type
 
   { TMainForm }
-
-  BrushStyleCbox = record
-    Name: string;
-    Style: TBrushStyle;
-  end;
 
   TMainForm = class(TForm)
     ColorDialog: TColorDialog;
@@ -56,7 +51,8 @@ var
   palette: TPalette;
   PanelMove: TObjectMove;
   ToolsPanel: TToolsPanel;
-
+  ScrollBar : TZoomScrollBar;
+  FigureManager : TFigureHistoryManager;
 implementation
 
 {$R *.lfm}
@@ -64,12 +60,14 @@ implementation
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FCanvas := tbitmap.Create;
-  Zoom := TZoom.Create(self, FCanvas);
-  palette := Tpalette.Create(self);
-  PanelMove := TObjectMove.Create(MainForm.Width, MainForm.Height);
-  History := THistory.Create(PaintBox, FCanvas);
+  Zoom := TZoom.Create(self);
+  palette := Tpalette.Create(self);             {15 - scroll bar width }
+  PanelMove := TObjectMove.Create(MainForm.Width - 15, MainForm.Height - 15);
   ToolsPanel := TToolsPanel.Create(self, ToolsIconList);
   ToolsManager := TToolsManager.Create(FCanvas);
+  ToolsDataUtils := TToolsDataUtils.Create(PaintBox, FCanvas);
+  ScrollBar := TZoomScrollBar.Create(self);
+  FigureManager := TFigureHistoryManager.Create(self);
 
   palette.OnMouseDown := @PanelMove.OnMouseDown;
   palette.OnMouseMove := @PanelMove.OnMouseMove;
@@ -84,30 +82,22 @@ begin
   FCanvas.canvas.rectangle(0, 0, FCanvas.Width, FCanvas.Height);
   FCanvas.canvas.brush.Style := bsClear;
   FCanvas.canvas.pen.color := clBlack;
+
+  ToolsManager.FTool := TPen.Create(FCanvas);
 end;
-//---------------------------PAINT-BOX------------------------------------------
+
 procedure TMainForm.PaintBoxMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  if ToolsManager.isZoomSelected = True then begin
-    if button = mbLeft then
-      zoom.zoomin(x,y);
-    if button = mbRight then
-      zoom.zoomout(x,y);
-    ToolsManager.isZoomSelected := True;
-  end
-  else begin
-    if Zoom.GetZoomValue > 0 then begin
-      x := Zoom.GetGlobalX(x);
-      y := Zoom.GetGlobalY(y);
-    end;
-    ToolsManager.tool.BeforeDraw(x,y);
-    with FCanvas.canvas do
-      History.Add(ToolsManager.tooltag, pen.Width, pen.color, Brush.Color, brush.Style);
-    History.AddCoords(ToolsManager.tool.Coord);
-    isDrawing := True;
+  if Zoom.GetZoomValue > 0 then begin
+    x := Zoom.GetGlobalX(x);
+    y := Zoom.GetGlobalY(y);
   end;
-  paintbox.invalidate;
+  ToolsManager.FTool.BeforeDraw(x, y, Button);
+  ToolsManager.FTool.AddToHistory(ToolsManager.FToolTag, FCanvas);
+  isDrawing := True;
+  ScrollBar.Invalidate;
+  PaintBox.invalidate;
 end;
 
 procedure TMainForm.PaintBoxMouseMove(Sender: TObject; Shift: TShiftState;
@@ -118,12 +108,12 @@ begin
       x := Zoom.GetGlobalX(x);
       y := Zoom.GetGlobalY(y);
     end;
-    ToolsManager.tool.Draw(x, y);
-    History.AddCoords(ToolsManager.tool.Coord);
+    ToolsManager.FTool.Draw(x, y);
+    ToolsManager.FTool.AddCoordsToHistory(ToolsManager.FTool.Coord);
     PaintBox.Invalidate;
     if Zoom.GetZoomValue > 0 then
       with zoom do
-        History.Show(z_px, z_py, z_n);
+        ToolsDataUtils.ShowHistory(z_px, z_py, z_n);
   end;
 end;
 
@@ -131,7 +121,7 @@ procedure TMainForm.PaintBoxMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
   if isDrawing = True then begin
-    ToolsManager.tool.AfterDraw;
+    ToolsManager.FTool.AfterDraw;
     isDrawing := False;
   end;
 end;
@@ -144,21 +134,21 @@ begin
   PaintBox.Canvas.CopyRect(rect(0, 0, PaintBox.Width, PaintBox.Height),
     FCanvas.canvas, r);
 end;
-//-----------------------------CTRL-Z-------------------------------------------
+
 procedure TMainForm.UndoClick(Sender: TObject);
 begin
   with zoom do
-    History.Undo(z_px, z_py, z_n);
+    ToolsDataUtils.Undo(z_px, z_py, z_n);
   paintbox.invalidate;
 end;
-//-----------------------------CTRL-Y-------------------------------------------
+
 procedure TMainForm.RedoClick(Sender: TObject);
 begin
   with zoom do
-    History.Redo(z_px, z_py, z_n);
+    ToolsDataUtils.Redo(z_px, z_py, z_n);
   paintbox.invalidate;
 end;
-//-----------------------------DIALOGS----------------------------------------
+
 procedure TMainForm.SaveAsClick(Sender: TObject);
 begin
   if SavePictureDialog.Execute then
@@ -194,8 +184,8 @@ begin
     writeln(output, '<svg width="', FCanvas.Width, 'mm" height="',
       FCanvas.Height, 'mm" viewBox="0 0 ', FCanvas.Width, ' ', FCanvas.Height,
       '" xmlns="http://www.w3.org/2000/svg" version="1.1">');
-    for i := 0 to History.GetLength - 1 do begin
-      EData := History.GetData(i);
+    for i := 0 to ToolsDataUtils.GetLength - 1 do begin
+      EData := ToolsDataUtils.GetData(i);
       Etool := classref[EData.Noftool].Tool.Create(FCanvas);
       ETool.ExportToSvg(output, EData);
       ETool.Free;

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, ExtCtrls,
-  StdCtrls, UTools, Graphics, UToolsManager, Buttons;
+  StdCtrls, UTools, Graphics, Buttons, UToolsManager;
 
 type
   OnClickEvent = procedure(Sender: TObject) of object;
@@ -21,7 +21,6 @@ type
     function GetTopPosition(i: integer): integer;
     function GetLeftPosition(i: integer): integer;
     procedure ToolClickEvent(Sender: TObject);
-    procedure ZoomClickEvent(Sender: TObject);
   end;
 
 implementation
@@ -41,7 +40,6 @@ begin
   end;
   for i := 0 to high(ClassRef) do
     AddButton(self, i, @ToolClickEvent);
-  AddButton(self, i + 1, @ZoomClickEvent);
 end;
 
 procedure TToolsPanel.AddButton(parent_: TComponent; tool_index: integer;
@@ -65,9 +63,9 @@ end;
 function TToolsPanel.GetTopPosition(i: integer): integer;
 begin
   Result := 20 + (18 * (i - i mod 2));
-  if i > 1 then    //чтоб 1-е 2 кнопки не съезжали
+  if i > 1 then
     Result -= 18;
-  Result -= trunc(i / 4) * 18;  //каждая 4 кнопка улетает еще на 18 вниз
+  Result -= trunc(i / 4) * 18;
 end;
 
 function TToolsPanel.GetLeftPosition(i: integer): integer;
@@ -77,17 +75,9 @@ end;
 
 procedure TToolsPanel.ToolClickEvent(Sender: TObject);
 begin
-  with ToolsManager do begin
-    isZoomSelected := False;
-    tool.Free;
-    ToolTag := TButton(Sender).tag;
-    tool := ClassRef[TButton(Sender).tag].Tool.Create(FCanvas);
-  end;
-end;
-
-procedure TToolsPanel.ZoomClickEvent(Sender: TObject);
-begin
-  ToolsManager.isZoomSelected := True;
+    ToolsManager.FTool.Free;
+    ToolsManager.FToolTag := TButton(Sender).tag;
+    ToolsManager.FTool := ClassRef[TButton(Sender).tag].Tool.Create(ToolsManager.FCanvas);
 end;
 
 end.

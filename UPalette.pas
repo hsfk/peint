@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, ExtCtrls,
-  StdCtrls, UToolsManager, Dialogs;
+  StdCtrls, Dialogs, UToolsManager;
 
 type
   BrushStyleCbox = record
@@ -183,6 +183,7 @@ begin
     ToolsManager.FCanvas.canvas.brush.color := Tshape(Sender).Brush.color;
     BrushShape.Brush.Color := Tshape(Sender).Brush.color;
     ToolsManager.FCanvas.canvas.brush.style := PStyle;
+
   end;
 end;
 
