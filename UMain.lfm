@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 46
+  Left = 237
   Height = 746
-  Top = 118
+  Top = 69
   Width = 923
   Caption = 'MainForm'
   ClientHeight = 726
@@ -69,6 +69,14 @@ object MainForm: TMainForm
       object Export: TMenuItem
         Caption = 'Экспортировать'
         OnClick = ExportClick
+      end
+      object ExportToSVP: TMenuItem
+        Caption = 'Экспортировать в ...'
+        OnClick = ExportToSVPClick
+      end
+      object ImportFromSVP: TMenuItem
+        Caption = 'Импортировать из ...'
+        OnClick = ImportFromSVPClick
       end
       object CloseProgram: TMenuItem
         Caption = 'Выход'

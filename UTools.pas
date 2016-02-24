@@ -11,11 +11,11 @@ type
   Coords = array of integer;
 
   ToolData = record
-    NofTool: integer;
+    NofTool: byte;
     PenColor: TColor;
     BrushColor: TColor;
     BrushStyle: TBrushStyle;
-    Width: integer;
+    Width: byte;
     ToolCoords: Coords;
   end;
 
@@ -127,8 +127,10 @@ type
     function GetLength: integer;
     function GetData(i: integer): ToolData;
     function GetPosition: integer;
+    procedure SetHistoryPosition(Position: integer);
     function IsFigureExists(X, Y, inaccuracy: integer): integer;
     procedure HighLightFigure(num: integer);
+    procedure AllClear;
   private
     PrevPenColor: TColor;
     PrevBrushColor: TColor;
@@ -149,7 +151,7 @@ var
 
 implementation
 
-function ColorToHex(color: TColor): string;
+function ColorToHex(Color: TColor): string;
 begin
   Result := Format('#%.2x%.2x%.2x', [byte(color), byte(color shr 8),
     byte(color shr 16)]);
@@ -517,6 +519,11 @@ begin
   Result := HistoryPos;
 end;
 
+procedure TToolsDataUtils.SetHistoryPosition(Position: integer);
+begin
+  HistoryPos := Position;
+end;
+
 function TToolsDataUtils.IsFigureExists(X, Y, inaccuracy: integer): integer;
 var
   i: integer;
@@ -554,7 +561,7 @@ var
   Y2: integer;
   Delta_: integer;
 begin
-  if length(FData) > 0 then begin
+  if (length(FData) > 0) and (num >= 0) then begin
     Delta_ := 1 shl Zoom.ZoomValue;
     with FData[num] do begin
       X1 := 99999;
@@ -618,6 +625,18 @@ begin
   SetLength(ClassRef, length(ClassRef) + 1);
   ClassRef[high(ClassRef)].Tool := Tool;
   ClassRef[high(ClassRef)].NameOfTool := NameOfTool;
+end;
+
+procedure TToolsDataUtils.AllClear;
+begin
+  SetLength(FData, 0);
+  HistoryPos := -1;
+  Zoom.PreviousX := 0;
+  Zoom.PreviousY := 0;
+  Zoom.CurrentX := 0;
+  Zoom.CurrentY := 0;
+  Zoom.ZoomValue := 0;
+  ShowHistory(Zoom.PreviousX, Zoom.PreviousX);
 end;
 
 initialization

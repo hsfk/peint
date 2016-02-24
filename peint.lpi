@@ -66,14 +66,12 @@
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="uscrollbar.pas"/>
+        <Filename Value="UScrollBar.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UScrollBar"/>
       </Unit7>
       <Unit8>
-        <Filename Value="ufigurehistorymanager.pas"/>
+        <Filename Value="UFigureHistoryManager.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UFigureHistoryManager"/>
       </Unit8>
     </Units>
   </ProjectOptions>

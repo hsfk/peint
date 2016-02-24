@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, UMain, UTools, UZoom, UPalette, UObjectMove, utoolspanel,
-UToolsManager, UScrollBar, UFigureHistoryManager;
+UToolsManager, UScrollBar, UFigureHistoryManager, USVPFormat;
 
 {$R *.res}
 

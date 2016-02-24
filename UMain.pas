@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Buttons, Menus, ExtDlgs, UTools, UZoom, UPalette,
-  UObjectMove, UToolsPanel, UToolsManager, UScrollBar, UFigureHistoryManager;
+  ExtCtrls, Buttons, Menus, ExtDlgs, UTools, UZoom, UPalette, USVPFormat,
+  UObjectMove, UToolsPanel, UScrollBar, UFigureHistoryManager, UToolsManager;
 
 type
 
@@ -15,20 +15,24 @@ type
 
   TMainForm = class(TForm)
     ColorDialog: TColorDialog;
+    Export: TMenuItem;
     ExportToSvg: TMenuItem;
+    ExportToSVP: TMenuItem;
+    ImportFromSVP: TMenuItem;
     ToolsIconList: TImageList;
     MainMenu: TMainMenu;
     EditMenu: TMainMenu;
-    FileItem: TMainMenu;
+
     Undo: TMenuItem;
     Redo: TMenuItem;
     SaveAs: TMenuItem;
     OpenAs: TMenuItem;
     CloseProgram: TMenuItem;
-    OpenPictureDialog: TOpenPictureDialog;
     PaintBox: TPaintBox;
     FCanvas: TBitmap;
+    procedure ExportToSVPClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure ImportFromSVPClick(Sender: TObject);
     procedure PaintBoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure PaintBoxMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
@@ -165,7 +169,11 @@ begin
 end;
 
 procedure TMainForm.OpenAsClick(Sender: TObject);
+var
+  OpenPictureDialog: TOpenPictureDialog;
 begin
+  OpenPictureDialog := TOpenPictureDialog.Create(Self);
+  OpenPictureDialog.Filter := 'Bitmap Picture|*.bmp';
   if OpenPictureDialog.Execute then
     FCanvas.LoadFromFile(OpenPictureDialog.FileName);
   PaintBox.Invalidate;
@@ -198,6 +206,34 @@ begin
     end;
     writeln(Output, '</svg>');
     closefile(Output);
+  end;
+end;
+
+procedure TMainForm.ImportFromSVPClick(Sender: TObject);
+var
+  SVPFormat: TSVPFormat;
+  ImportFromSVPDialog: TSavePictureDialog;
+begin
+  ImportFromSVPDialog := TSavePictureDialog.Create(self);
+  ImportFromSVPDialog.Filter := 'SOLG Vector Paint|*.svp';
+  if ImportFromSVPDialog.Execute then begin
+    SVPFormat := TSVPFormat.Create;
+    SVPFormat.ImportFromSVP(ImportFromSVPDialog.FileName);
+    SVPFormat.Free;
+  end;
+  FigureManager.LoadHistory;
+end;
+
+procedure TMainForm.ExportToSVPClick(Sender: TObject);
+var
+  SVPFormat: TSVPFormat;
+  ExportToSVPDialog: TSavePictureDialog;
+begin
+  ExportToSVPDialog := TSavePictureDialog.Create(self);
+  ExportToSVPDialog.Filter := 'SOLG Vector Paint|*.svp';
+  if ExportToSVPDialog.Execute then begin
+    SVPFormat := TSVPFormat.Create;
+    SVPFormat.ExportToSVP(ExportToSVPDialog.FileName);
   end;
 end;
 
