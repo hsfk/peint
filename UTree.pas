@@ -5,7 +5,7 @@ unit UTree;
 interface
 
 uses
-  Classes, SysUtils, crt, bitops;
+  Classes, SysUtils,UBitOps;
 
 type
   nodeptr = ^node;
