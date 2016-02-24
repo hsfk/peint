@@ -5,48 +5,78 @@ unit UFigureHistoryManager;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls, UTools;
+  Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls, UTools, Menus, UZoom;
 
 type
   TFigureHistoryManager = class(Tpanel)
   public
-    constructor Create(parent_: TComponent);
+    constructor Create(Parent_: TComponent);
+    procedure LoadHistory;
+  private
+    FListBox: TListBox;
+    procedure OnMouseDownEvent(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: integer);
   end;
 
   TFigureListBox = class(TListBox)
-    public
-      constructor Create(parent_: TComponent);
+  public
+    constructor Create(Parent_: TComponent);
   end;
 
 implementation
 
-constructor TFigureHistoryManager.Create(parent_: TComponent);
+constructor TFigureHistoryManager.Create(Parent_: TComponent);
 begin
-  inherited Create(parent_);
-  with self do begin
-    Parent := twincontrol(parent_);
-    Width := 60;
-    Height := twincontrol(parent_).height - 35 - 1;
-    brush.Color := clDkGray;
-    BevelInner := bvNone;
-    Left := twincontrol(parent_).width - 60 - 15 -1;
-    top := 0;
+  inherited Create(Parent_);
+  with Self do begin
+    Parent := twincontrol(Parent_);
+    Width := 95;
+    Height := twincontrol(Parent_).Height - 35 - 1;
+    BevelOuter := bvLowered;
+    Left := twincontrol(Parent_).Width - 60 - 15 - 35 - 1;
+    Top := 0;
   end;
-  TFigureListBox.Create(parent_);
+
+  FListBox := TFigureListBox.Create(Parent_);
+  FListBox.OnMouseDown := @OnMouseDownEvent;
 end;
 
-constructor TFigureListBox.Create(parent_: TComponent);
+procedure TFigureHistoryManager.LoadHistory;
+var
+  i: integer;
+  Text_: string;
 begin
-  inherited Create(parent_);
-  with self do begin
-    Parent := twincontrol(parent_);
-    Width := 55;
-    Height := twincontrol(parent_).height - 35 - 1 - 5;
-    brush.Color := clGray;
-    Left := twincontrol(parent_).width - 60 - 15 -1 + 5;
-    top := 0 + 5;
+  FListBox.Items.Clear;
+  for i := 0 to ToolsDataUtils.GetPosition do begin
+    Text_ := IntToStr(i) + '. ' +
+      ClassRef[ToolsDataUtils.GetData(i).NofTool].NameOfTool;
+    FlistBox.Items.Add(Text_);
+  end;
+end;
+
+procedure TFigureHistoryManager.OnMouseDownEvent(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+begin
+  if Button = mbLeft then begin
+    ToolsDataUtils.ShowHistory(Zoom.PreviousX, Zoom.PreviousY);
+    ToolsDataUtils.HighLightFigure(FListBox.ItemIndex);
+  end;
+  if Button = mbRight then begin
+    ToolsDataUtils.Delete(FListBox.ItemIndex);
+    LoadHistory;
+  end;
+end;
+
+constructor TFigureListBox.Create(Parent_: TComponent);
+begin
+  inherited Create(Parent_);
+  with Self do begin
+    Parent := twincontrol(Parent_);
+    Width := 85;
+    Height := twincontrol(Parent_).Height - 35 - 1 - 5;
+    Left := twincontrol(Parent_).Width - 60 - 15 - 35 + 5;
+    Top := 0 + 5;
   end;
 end;
 
 end.
-

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, Buttons, Menus, ExtDlgs, UTools, UZoom, UPalette,
-  UObjectMove, UToolsPanel, UToolsManager, UScrollBar,UFigureHistoryManager;
+  UObjectMove, UToolsPanel, UToolsManager, UScrollBar, UFigureHistoryManager;
 
 type
 
@@ -17,12 +17,17 @@ type
     ColorDialog: TColorDialog;
     ExportToSvg: TMenuItem;
     ToolsIconList: TImageList;
-    MainMenu, EditMenu, FileItem: TMainMenu;
-    Undo, Redo, SaveAs, OpenAs, CloseProgram: TMenuItem;
+    MainMenu: TMainMenu;
+    EditMenu: TMainMenu;
+    FileItem: TMainMenu;
+    Undo: TMenuItem;
+    Redo: TMenuItem;
+    SaveAs: TMenuItem;
+    OpenAs: TMenuItem;
+    CloseProgram: TMenuItem;
     OpenPictureDialog: TOpenPictureDialog;
     PaintBox: TPaintBox;
-    SavePictureDialog: TSavePictureDialog;
-    FCanvas: tbitmap;
+    FCanvas: TBitmap;
     procedure FormCreate(Sender: TObject);
     procedure PaintBoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
@@ -30,10 +35,8 @@ type
     procedure PaintBoxMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure PaintBoxPaint(Sender: TObject);
-
     procedure RedoClick(Sender: TObject);
     procedure UndoClick(Sender: TObject);
-
     procedure ExportClick(Sender: TObject);
     procedure SaveAsClick(Sender: TObject);
     procedure CloseProgramClick(Sender: TObject);
@@ -46,13 +49,15 @@ type
 
 var
   MainForm: TMainForm;
-  isDrawing, isMoving: boolean;
+  isDrawing: boolean;
+  isMoving: boolean;
 
   palette: TPalette;
   PanelMove: TObjectMove;
   ToolsPanel: TToolsPanel;
-  ScrollBar : TZoomScrollBar;
-  FigureManager : TFigureHistoryManager;
+  ScrollBar: TZoomScrollBar;
+  FigureManager: TFigureHistoryManager;
+
 implementation
 
 {$R *.lfm}
@@ -61,8 +66,8 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FCanvas := tbitmap.Create;
   Zoom := TZoom.Create(self);
-  palette := Tpalette.Create(self);             {15 - scroll bar width }
-  PanelMove := TObjectMove.Create(MainForm.Width - 15, MainForm.Height - 15);
+  palette := Tpalette.Create(self);
+  PanelMove := TObjectMove.Create(MainForm.Width - 15 - 94, MainForm.Height - 15);
   ToolsPanel := TToolsPanel.Create(self, ToolsIconList);
   ToolsManager := TToolsManager.Create(FCanvas);
   ToolsDataUtils := TToolsDataUtils.Create(PaintBox, FCanvas);
@@ -89,10 +94,7 @@ end;
 procedure TMainForm.PaintBoxMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  if Zoom.GetZoomValue > 0 then begin
-    x := Zoom.GetGlobalX(x);
-    y := Zoom.GetGlobalY(y);
-  end;
+  ToolsManager.FTool.ToGlobalCoords(x, y);
   ToolsManager.FTool.BeforeDraw(x, y, Button);
   ToolsManager.FTool.AddToHistory(ToolsManager.FToolTag, FCanvas);
   isDrawing := True;
@@ -104,16 +106,11 @@ procedure TMainForm.PaintBoxMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: integer);
 begin
   if isDrawing = True then begin
-    if Zoom.GetZoomValue > 0 then begin
-      x := Zoom.GetGlobalX(x);
-      y := Zoom.GetGlobalY(y);
-    end;
+    ToolsManager.FTool.ToGlobalCoords(x, y);
     ToolsManager.FTool.Draw(x, y);
-    ToolsManager.FTool.AddCoordsToHistory(ToolsManager.FTool.Coord);
+    ToolsManager.FTool.AddCoordsToHistory(ToolsManager.FTool.ToolCoords);
+    ToolsManager.FTool.ShowHistoryWhenZoomed;
     PaintBox.Invalidate;
-    if Zoom.GetZoomValue > 0 then
-      with zoom do
-        ToolsDataUtils.ShowHistory(z_px, z_py, z_n);
   end;
 end;
 
@@ -123,41 +120,48 @@ begin
   if isDrawing = True then begin
     ToolsManager.FTool.AfterDraw;
     isDrawing := False;
+    FigureManager.LoadHistory;
   end;
 end;
 
 procedure TMainForm.PaintBoxPaint(Sender: TObject);
 var
-  r: trect;
+  Rect_: trect;
 begin
-  r := bounds(0, 0, FCanvas.Width, FCanvas.Height);
+  Rect_ := bounds(0, 0, FCanvas.Width, FCanvas.Height);
   PaintBox.Canvas.CopyRect(rect(0, 0, PaintBox.Width, PaintBox.Height),
-    FCanvas.canvas, r);
+    FCanvas.canvas, Rect_);
 end;
 
 procedure TMainForm.UndoClick(Sender: TObject);
 begin
-  with zoom do
-    ToolsDataUtils.Undo(z_px, z_py, z_n);
+  with Zoom do
+    ToolsDataUtils.Undo(PreviousX, PreviousY);
   paintbox.invalidate;
+  FigureManager.LoadHistory;
 end;
 
 procedure TMainForm.RedoClick(Sender: TObject);
 begin
-  with zoom do
-    ToolsDataUtils.Redo(z_px, z_py, z_n);
+  with Zoom do
+    ToolsDataUtils.Redo(PreviousX, PreviousY);
   paintbox.invalidate;
+  FigureManager.LoadHistory;
 end;
 
 procedure TMainForm.SaveAsClick(Sender: TObject);
+var
+  SavePictureDialog: TSavePictureDialog;
 begin
+  SavePictureDialog := TSavePictureDialog.Create(self);
+  SavePictureDialog.Filter := 'Bitmap Picture|*.bmp';
   if SavePictureDialog.Execute then
     FCanvas.SaveToFile(SavePictureDialog.filename);
 end;
 
 procedure TMainForm.CloseProgramClick(Sender: TObject);
 begin
-  halt;
+  Halt;
 end;
 
 procedure TMainForm.OpenAsClick(Sender: TObject);
@@ -169,29 +173,31 @@ end;
 
 procedure TMainForm.ExportClick(Sender: TObject);
 var
-  filename: string;
-  output: textfile;
+  Filename: string;
+  Output: textfile;
   i: integer;
-  ETool: TTools;
-  EData: ToolData;
+  TmpTool: TTools;
+  TmpData: ToolData;
+  ExportDialog: TSavePictureDialog;
 begin
-  SavePictureDialog.Filter := 'Vector graphics|*.svg';
-  if SavePictureDialog.Execute then begin
-    filename := SavePictureDialog.FileName;
-    assignfile(output, filename);
-    Rewrite(output);
-    WriteLn(output, '<?xml version="1.0" standalone="no"?>');
-    writeln(output, '<svg width="', FCanvas.Width, 'mm" height="',
+  ExportDialog := TSavePictureDialog.Create(self);
+  ExportDialog.Filter := 'Scalable Vector Graphics|*.svg';
+  if ExportDialog.Execute then begin
+    Filename := ExportDialog.FileName;
+    assignfile(Output, Filename);
+    Rewrite(Output);
+    WriteLn(Output, '<?xml version="1.0" standalone="no"?>');
+    writeln(Output, '<svg width="', FCanvas.Width, 'mm" height="',
       FCanvas.Height, 'mm" viewBox="0 0 ', FCanvas.Width, ' ', FCanvas.Height,
       '" xmlns="http://www.w3.org/2000/svg" version="1.1">');
     for i := 0 to ToolsDataUtils.GetLength - 1 do begin
-      EData := ToolsDataUtils.GetData(i);
-      Etool := classref[EData.Noftool].Tool.Create(FCanvas);
-      ETool.ExportToSvg(output, EData);
-      ETool.Free;
+      TmpData := ToolsDataUtils.GetData(i);
+      TmpTool := classref[TmpData.Noftool].Tool.Create(FCanvas);
+      TmpTool.ExportToSvg(Output, TmpData);
+      TmpTool.Free;
     end;
-    writeln(output, '</svg>');
-    closefile(output);
+    writeln(Output, '</svg>');
+    closefile(Output);
   end;
 end;
 

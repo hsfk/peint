@@ -11,16 +11,22 @@ type
 
   TZoom = class
   public
-    z_x, z_y, z_n, z_px, z_py, cx, cy: integer;
-    constructor Create(parent_: TComponent);
-    procedure ZoomOut(x, y: integer);
-    procedure ZoomIn(x, y: integer);
-    procedure SetZoom(x, y: integer);
-    function GetGlobalX(loc_x: integer): integer;
-    function GetGlobalY(loc_y: integer): integer;
+    CurrentX: integer;
+    CurrentY: integer;
+    ZoomValue: integer;
+    PreviousX: integer;
+    PreviousY: integer;
+    constructor Create(Parent_: TComponent);
+    procedure CoordAllignment(var X1, X2, Y1, Y2: integer);
+    procedure ZoomOut;
+    procedure ZoomIn;
+    procedure SetZoom(X, Y: integer);
+    function GetGlobalX(LocalX: integer): integer;
+    function GetGlobalY(LocalY: integer): integer;
     function GetZoomValue: integer;
   private
-    Width, Height: integer;
+    Width: integer;
+    Height: integer;
   end;
 
 var
@@ -28,72 +34,80 @@ var
 
 implementation
 
-constructor TZoom.Create(parent_: TComponent);
+constructor TZoom.Create(Parent_: TComponent);
 begin
-  z_x := 0;
-  z_y := 0;
-  z_px := 0;
-  z_py := 0;
-  z_n := 0;
-  Width := twincontrol(parent_).Width;
-  Height := twincontrol(parent_).Height;
+  CurrentX := 0;
+  CurrentY := 0;
+  PreviousX := 0;
+  PreviousY := 0;
+  ZoomValue := 0;
+  Width := twincontrol(Parent_).Width;
+  Height := twincontrol(Parent_).Height;
 end;
 
-procedure TZoom.ZoomOut(x, y: integer);
+procedure TZoom.CoordAllignment(var X1, X2, Y1, Y2: integer);
 begin
-  SetZoom(x, y);
-  cx := z_px + cx div (1 shl (z_n + 1));
-  cy := z_py + cy div (1 shl (z_n + 1));
-  if z_n > 0 then
-    z_n -= 1;
-  z_px := cx - (Width div 4) div (1 shl z_n);
-  z_py := cy - (Height div 4) div (1 shl z_n);
-  if z_px < 0 then
-    z_px := 0;
-  if z_py < 0 then
-    z_py := 0;
-  if z_n = 0 then begin
-    z_px := 0;
-    z_py := 0;
+  if Zoom.ZoomValue = 0 then begin
+    X1 -= Zoom.PreviousX;
+    X2 -= Zoom.PreviousX;
+    Y1 -= Zoom.PreviousY;
+    Y2 -= Zoom.PreviousY;
   end;
 end;
 
-procedure TZoom.ZoomIn(x, y: integer);
+procedure TZoom.ZoomOut;
 begin
-  SetZoom(x, y);
-  z_x := cx - Width div 4;
-  z_y := cy - Height div 4;
-  if z_x < 0 then
-    z_x := 0;
-  if z_y < 0 then
-    z_y := 0;
-  if z_n < 8 then
-    z_n += 1;
-  z_x := z_px + z_x div (1 shl (z_n - 1));
-  z_y := z_py + z_y div (1 shl (z_n - 1));
-  z_px := z_x;
-  z_py := z_y;
+  CurrentX := CurrentX div (1 shl (ZoomValue));
+  CurrentY := CurrentY div (1 shl (ZoomValue));
+  PreviousX := PreviousX - CurrentX;
+  PreviousY := PreviousY - CurrentY;
+  if ZoomValue > 0 then
+    ZoomValue -= 1;
+  if PreviousX < 0 then
+    PreviousX := 0;
+  if PreviousY < 0 then
+    PreviousY := 0;
+  if ZoomValue = 0 then begin
+    PreviousX := 0;
+    PreviousY := 0;
+  end;
 end;
 
-procedure TZoom.SetZoom(x, y: integer);
+procedure TZoom.ZoomIn;
 begin
-  cx := x;
-  cy := y;
+  CurrentX := CurrentX - Width div 4;
+  CurrentY := CurrentY - Height div 4;
+  if CurrentX < 0 then
+    CurrentX := 0;
+  if CurrentY < 0 then
+    CurrentY := 0;
+  if ZoomValue < 8 then
+    ZoomValue += 1;
+  CurrentX := PreviousX + CurrentX div (1 shl (ZoomValue - 1));
+  CurrentY := PreviousY + CurrentY div (1 shl (ZoomValue - 1));
+  PreviousX := CurrentX;
+  PreviousY := CurrentY;
 end;
 
-function TZoom.GetGlobalX(loc_x: integer): integer;
+procedure TZoom.SetZoom(X, Y: integer);
 begin
-  Result := z_px + loc_x div (1 shl (z_n));
+  CurrentX := X;
+  CurrentY := Y;
 end;
 
-function TZoom.GetGlobalY(loc_y: integer): integer;
+function TZoom.GetGlobalX(LocalX: integer): integer;
 begin
-  Result := z_py + loc_y div (1 shl (z_n));
+  Result := PreviousX + LocalX div (1 shl (ZoomValue));
+end;
+
+function TZoom.GetGlobalY(LocalY: integer): integer;
+begin
+  Result := PreviousY + LocalY div (1 shl (ZoomValue));
 end;
 
 function TZoom.GetZoomValue: integer;
 begin
-  Result := z_n;
+  Result := ZoomValue;
 end;
 
 end.

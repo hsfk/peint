@@ -35,8 +35,9 @@ begin
     Parent := twincontrol(parent_);
     Width := 5 + 40 + 5;
     Height := 20 * (high(ClassRef) + 1);
-    brush.Color := clDkGray;
-    BevelInner := bvNone;
+   // brush.Color := clDkGray;
+    BevelInner := bvRaised;
+    BevelOuter:= bvLowered;
   end;
   for i := 0 to high(ClassRef) do
     AddButton(self, i, @ToolClickEvent);

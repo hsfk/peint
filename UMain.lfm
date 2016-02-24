@@ -1,11 +1,11 @@
 object MainForm: TMainForm
-  Left = 212
-  Height = 452
-  Top = 134
-  Width = 671
+  Left = 46
+  Height = 746
+  Top = 118
+  Width = 923
   Caption = 'MainForm'
-  ClientHeight = 432
-  ClientWidth = 671
+  ClientHeight = 726
+  ClientWidth = 923
   Menu = MainMenu
   OnCreate = FormCreate
   LCLVersion = '1.4.4.0'
@@ -17,9 +17,9 @@ object MainForm: TMainForm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 432
+    Height = 726
     Top = 0
-    Width = 671
+    Width = 923
     Anchors = [akTop, akLeft, akRight, akBottom]
     OnMouseDown = PaintBoxMouseDown
     OnMouseMove = PaintBoxMouseMove
@@ -50,12 +50,12 @@ object MainForm: TMainForm
       'ColorS=F0FBFF'
       'ColorT=A4A0A0'
     )
-    left = 408
-    top = 352
+    left = 888
+    top = 56
   end
   object MainMenu: TMainMenu
-    left = 328
-    top = 352
+    left = 888
+    top = 104
     object FileItem: TMenuItem
       Caption = 'Файл'
       object OpenAs: TMenuItem
@@ -89,13 +89,9 @@ object MainForm: TMainForm
       end
     end
   end
-  object SavePictureDialog: TSavePictureDialog
-    left = 240
-    top = 352
-  end
   object ToolsIconList: TImageList
-    left = 496
-    top = 352
+    left = 888
+    top = 8
     Bitmap = {
       4C69070000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF

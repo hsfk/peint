@@ -13,10 +13,10 @@ type
   ToolData = record
     NofTool: integer;
     PenColor: TColor;
-    BrushColor: Tcolor;
+    BrushColor: TColor;
     BrushStyle: TBrushStyle;
     Width: integer;
-    Coord: Coords;
+    ToolCoords: Coords;
   end;
 
   ClassOfInstrument = class of TTools;
@@ -28,30 +28,32 @@ type
 
   TTools = class
   public
-    Coord: Coords;
-    constructor Create(var holstToDraw: TBitmap);
-    procedure AddToHistory(ToolTag: integer; Canvas_: tbitmap); virtual;
+    ToolCoords: Coords;
+    constructor Create(var SceneToDraw: TBitmap);
+    procedure ShowHistoryWhenZoomed; virtual;
+    procedure ToGlobalCoords(var X, Y: integer); virtual;
+    procedure AddToHistory(ToolTag: integer; Scene: tbitmap); virtual;
     procedure AddCoordsToHistory(Coordinates: Coords); virtual;
-    procedure BeforeDraw(x, y: integer; Button: TMouseButton); virtual;
-    procedure Draw(x, y: integer); virtual; abstract;
-    procedure ExportToSvg(var output: TextFile; Data: ToolData); virtual; abstract;
-    procedure AfterDraw;
+    procedure BeforeDraw(X, Y: integer; Button: TMouseButton); virtual;
+    procedure Draw(X, Y: integer); virtual; abstract;
+    procedure ExportToSvg(var Output: TextFile; Data: ToolData); virtual; abstract;
+    procedure AfterDraw; virtual;
   private
-    FCanvas: tbitmap;
-    FTmpCanvas: tbitmap;
+    FScene: tbitmap;
+    FTmpScene: tbitmap;
   end;
 
   TBufferRequired = class(TTools)
   public
-    procedure Draw(x, y: integer); override; abstract;
-    procedure ExportToSvg(var output: TextFile; Data: ToolData);
+    procedure Draw(X, Y: integer); override; abstract;
+    procedure ExportToSvg(var Output: TextFile; Data: ToolData);
       override; abstract;
   end;
 
   TBufferNotRequired = class(TTools)
   public
-    procedure Draw(x, y: integer); override; abstract;
-    procedure ExportToSvg(var output: TextFile; Data: ToolData);
+    procedure Draw(X, Y: integer); override; abstract;
+    procedure ExportToSvg(var Output: TextFile; Data: ToolData);
       override; abstract;
   end;
 
@@ -59,72 +61,83 @@ type
   public
     procedure AddToHistory(ToolTag: integer; Canvas_: tbitmap); override;
     procedure AddCoordsToHistory(Coordinates: Coords); override;
-    procedure Draw(x, y: integer); override;
+    procedure Draw(X, Y: integer); override;
   end;
 
   TZoom = class(TSpecTools)
   public
-    procedure BeforeDraw(x, y: integer; Button: TMouseButton); override;
+    procedure ToGlobalCoords(var X, Y: integer); override;
+    procedure BeforeDraw(X, Y: integer; Button: TMouseButton); override;
+    procedure ShowHistoryWhenZoomed; override;
   end;
 
   TSelect = class(TSpecTools)
   public
-    procedure BeforeDraw(x, y: integer; Button: TMouseButton); override;
+    procedure BeforeDraw(X, Y: integer; Button: TMouseButton); override;
   end;
 
   TArm = class(TSpecTools)
   public
-    procedure BeforeDraw(x, y: integer; Button: TMouseButton); override;
-    procedure Draw(x, y: integer);
-    private
-    prevx,prevy : integer;
+    procedure BeforeDraw(X, Y: integer; Button: TMouseButton); override;
+    procedure Draw(X, Y: integer); override;
+    procedure AfterDraw; override;
+    procedure ShowHistoryWhenZoomed; override;
+  private
+    PrevX: integer;
+    PrevY: integer;
+    XOffset: integer;
+    YOffset: integer;
   end;
 
   TRectangle = class(TBufferRequired)
   public
-    procedure Draw(x, y: integer); override;
-    procedure ExportToSvg(var output: TextFile; Data: ToolData); override;
+    procedure Draw(X, Y: integer); override;
+    procedure ExportToSvg(var Output: TextFile; Data: ToolData); override;
   end;
 
   TEllipse = class(TBufferRequired)
   public
-    procedure Draw(x, y: integer); override;
-    procedure ExportToSvg(var output: TextFile; Data: ToolData); override;
+    procedure Draw(X, Y: integer); override;
+    procedure ExportToSvg(var Output: TextFile; Data: ToolData); override;
   end;
 
   TPen = class(TBufferNotRequired)
   public
-    procedure Draw(x, y: integer); override;
-    procedure ExportToSvg(var output: TextFile; Data: ToolData); override;
+    procedure Draw(X, Y: integer); override;
+    procedure ExportToSvg(var Output: TextFile; Data: ToolData); override;
   end;
 
   TFill = class(TBufferNotRequired)
   public
-    procedure Draw(x, y: integer); override;
-    procedure BeforeDraw(x, y: integer; Button: TMouseButton); override;
-    procedure ExportToSvg(var output: TextFile; Data: ToolData); override;
+    procedure Draw(X, Y: integer); override;
+    procedure BeforeDraw(X, Y: integer; Button: TMouseButton); override;
+    procedure ExportToSvg(var Output: TextFile; Data: ToolData); override;
   end;
 
   TToolsDataUtils = class
   public
-    constructor Create(var PaintBox_: TPaintbox; var Holst_: tbitmap);
-    procedure ShowHistory(x_param, y_param, delta_param: integer);
-    procedure Add(Name, wdt: integer; Pcolor, Bcolor: tcolor; Style: TBrushStyle);
+    constructor Create(var PaintBox_: TPaintbox; var Scene: tbitmap);
+    procedure ShowHistory(X_, Y_: integer);
+    procedure Add(NofTool_, Width_: integer; PenColor_, BrushColor_: tcolor;
+      BrushStyle_: TBrushStyle);
+    procedure Delete(Num: integer);
     procedure AddCoords(var Coordinates: Coords);
-    procedure Undo(x_param, y_param, delta_param: integer);
-    procedure Redo(x_param, y_param, delta_param: integer);
+    procedure Undo(X_, Y_: integer);
+    procedure Redo(X_, Y_: integer);
     function GetLength: integer;
     function GetData(i: integer): ToolData;
-    function IsFigureExists(x, y, inaccuracy: integer): integer;
+    function GetPosition: integer;
+    function IsFigureExists(X, Y, inaccuracy: integer): integer;
     procedure HighLightFigure(num: integer);
-    procedure MovFigure(num, x_offset, y_offset: integer);
   private
-    PrevPColor, PrevBColor: TColor;
-    PrevBStyle: TBrushStyle;
+    PrevPenColor: TColor;
+    PrevBrushColor: TColor;
+    PrevBrushStyle: TBrushStyle;
     FPaintBox: TPaintbox;
-    FCanvas: tbitmap;
-    Data: array of ToolData;
-    position, PrevPWidth: integer;
+    FScene: tbitmap;
+    FData: array of ToolData;
+    HistoryPos: integer;
+    PrevPWidth: integer;
     procedure SaveColors;
     procedure LoadColors;
   end;
@@ -132,6 +145,7 @@ type
 var
   ToolsDataUtils: TToolsDataUtils;
   ClassRef: array of ToolName;
+  NULL: integer;
 
 implementation
 
@@ -141,23 +155,22 @@ begin
     byte(color shr 16)]);
 end;
 
-procedure Init(Tool: ClassOfInstrument; NameOfTool: string);
+constructor TTools.Create(var SceneToDraw: TBitmap);
 begin
-  setlength(ClassRef, length(ClassRef) + 1);
-  classref[high(ClassRef)].Tool := Tool;
-  classref[high(ClassRef)].NameOfTool := NameOfTool;
+  FScene := SceneToDraw;
 end;
 
-constructor TTools.Create(var holstToDraw: TBitmap);
+procedure TTools.ShowHistoryWhenZoomed;
 begin
-  FCanvas := holstToDraw;
+  if Zoom.ZoomValue > 0 then
+    ToolsDataUtils.ShowHistory(Zoom.PreviousX, Zoom.PreviousY);
 end;
 
-procedure TTools.AddToHistory(ToolTag: integer; Canvas_: tbitmap);
+procedure TTools.AddToHistory(ToolTag: integer; Scene: tbitmap);
 begin
-  with Canvas_.Canvas do begin
+  with Scene.Canvas do begin
     ToolsDataUtils.Add(ToolTag, pen.Width, pen.color, Brush.Color, brush.Style);
-    ToolsDataUtils.AddCoords(Coord);
+    ToolsDataUtils.AddCoords(ToolCoords);
   end;
 end;
 
@@ -166,140 +179,177 @@ begin
   ToolsDataUtils.AddCoords(Coordinates);
 end;
 
-procedure TTools.BeforeDraw(x, y: integer; Button: TMouseButton);
+procedure TTools.BeforeDraw(X, Y: integer; Button: TMouseButton);
 var
-  r: trect;
+  Rect_: trect;
 begin
-  Setlength(Coord, 2);
-  Coord[0] := x;
-  Coord[1] := y;
-  FTmpCanvas := tbitmap.Create;
-  FTmpCanvas.Width := FCanvas.Width;
-  FTmpCanvas.Height := FCanvas.Height;
-  r := bounds(0, 0, FCanvas.Width, FCanvas.Height);
-  FTmpCanvas.Canvas.CopyRect(rect(0, 0, FTmpCanvas.Width, FTmpCanvas.Height),
-    FCanvas.canvas, r);
+  Setlength(ToolCoords, 2);
+  ToolCoords[0] := X;
+  ToolCoords[1] := Y;
+  FTmpScene := tbitmap.Create;
+  FTmpScene.Width := FScene.Width;
+  FTmpScene.Height := FScene.Height;
+  Rect_ := bounds(0, 0, FScene.Width, FScene.Height);
+  FTmpScene.Canvas.CopyRect(rect(0, 0, FTmpScene.Width, FTmpScene.Height),
+    FScene.canvas, Rect_);
 end;
 
 procedure TTools.AfterDraw;
 begin
-  FTmpCanvas.Free;
+  FTmpScene.Free;
+end;
+
+procedure TTools.ToGlobalCoords(var X, Y: integer);
+begin
+  X := Zoom.GetGlobalX(X);
+  Y := Zoom.GetGlobalY(Y);
 end;
 
 { Tools }
-procedure TZoom.BeforeDraw(x, y: integer; Button: TMouseButton);
+procedure TZoom.BeforeDraw(X, Y: integer; Button: TMouseButton);
 begin
-  with Zoom do begin
-    SetZoom(x, y);
-    if Button = mbLeft then begin
-      ZoomIn(x, y);
-      ToolsDataUtils.ShowHistory(z_x, z_y, z_n);
-    end;
-    if Button = mbRight then begin
-      ZoomOut(x, y);
-      ToolsDataUtils.ShowHistory(z_px, z_py, z_n);
-    end;
+  Zoom.SetZoom(X, Y);
+  if Button = mbLeft then begin
+    Zoom.ZoomIn;
+    ToolsDataUtils.ShowHistory(Zoom.CurrentX, Zoom.CurrentY);
+  end;
+  if Button = mbRight then begin
+    Zoom.ZoomOut;
+    ToolsDataUtils.ShowHistory(Zoom.PreviousX, Zoom.PreviousY);
   end;
 end;
 
-procedure TSelect.BeforeDraw(x, y: integer; Button: TMouseButton);
+procedure TSelect.BeforeDraw(X, Y: integer; Button: TMouseButton);
 var
   fig: integer;
 begin
-  fig := ToolsDataUtils.IsFigureExists(x, y, 3);
+  fig := ToolsDataUtils.IsFigureExists(X, Y, 3);
   if fig <> -1 then
     ToolsDataUtils.HighLightFigure(fig)
   else
-    with Zoom do
-      ToolsDataUtils.ShowHistory(z_x, z_y, z_n);
+    ToolsDataUtils.ShowHistory(Zoom.PreviousX, Zoom.PreviousY);
 end;
 
-procedure TArm.BeforeDraw(x, y: integer; Button: TMouseButton);
-var i : integer;
+procedure TArm.BeforeDraw(X, Y: integer; Button: TMouseButton);
 begin
-
+  PrevX := X;
+  PrevY := Y;
 end;
 
-procedure TArm.Draw(x, y: integer);
-begin
-
-end;
-
-procedure TRectangle.Draw(x, y: integer);
+procedure TArm.Draw(X, Y: integer);
 var
-  r: trect;
+  X_: integer;
+  Y_: integer;
 begin
-  Setlength(Coord, 4);
-  Coord[2] := x;
-  Coord[3] := y;
-  r := bounds(0, 0, FTmpCanvas.Width, FTmpCanvas.Height);
-  FCanvas.Canvas.CopyRect(rect(0, 0, FCanvas.Width, FCanvas.Height),
-    FTmpCanvas.canvas, r);
-  FCanvas.Canvas.Rectangle(Coord[0], Coord[1], X, Y);
+  XOffset := (PrevX - X);
+  YOffset := (PrevY - Y);
+  X_ := Zoom.PreviousX + XOffset;
+  Y_ := Zoom.PreviousY + YOffset;
+  Zoom.CoordAllignment(X_, NULL, Y_, NULL);
+  ToolsDataUtils.ShowHistory(X_, Y_);
+end;
+
+procedure TArm.AfterDraw;
+begin
+  inherited AfterDraw;
+  Zoom.PreviousX += XOffset;
+  Zoom.PreviousY += YOffset;
+  XOffset := 0;
+  YOffset := 0;
+end;
+
+procedure TRectangle.Draw(X, Y: integer);
+var
+  Rect_: trect;
+  X_, y_: integer;
+begin
+  Setlength(ToolCoords, 4);
+  ToolCoords[2] := X;
+  ToolCoords[3] := Y;
+  Rect_ := bounds(0, 0, FTmpScene.Width, FTmpScene.Height);
+  FScene.Canvas.CopyRect(Rect(0, 0, FScene.Width, FScene.Height),
+    FTmpScene.canvas, Rect_);
+  X_ := ToolCoords[0];
+  y_ := ToolCoords[1];
+  Zoom.CoordAllignment(X_, X, y_, Y);
+  FScene.Canvas.Rectangle(X_, y_, X, Y);
 end;
 
 procedure TRectangle.ExportToSvg(var output: TextFile; Data: ToolData);
 var
-  x, y, wdt, hgt: integer;
+  X: integer;
+  Y: integer;
+  Width: integer;
+  Height: integer;
 begin
-  if Data.coord[0] > Data.coord[2] then begin
-    x := Data.coord[2];
-    wdt := Data.coord[0] - x;
+  if Data.ToolCoords[0] > Data.ToolCoords[2] then begin
+    X := Data.ToolCoords[2];
+    Width := Data.ToolCoords[0] - X;
   end
   else begin
-    x := Data.Coord[0];
-    wdt := Data.Coord[2] - x;
+    X := Data.ToolCoords[0];
+    Width := Data.ToolCoords[2] - X;
   end;
 
-  if Data.coord[1] > Data.coord[3] then begin
-    y := Data.coord[3];
-    hgt := Data.coord[1] - y;
+  if Data.ToolCoords[1] > Data.ToolCoords[3] then begin
+    Y := Data.ToolCoords[3];
+    Height := Data.ToolCoords[1] - Y;
   end
   else begin
-    y := Data.Coord[1];
-    hgt := Data.Coord[3] - y;
+    Y := Data.ToolCoords[1];
+    Height := Data.ToolCoords[3] - Y;
   end;
-  writeln(output, '  <rect x="', x, '" y="', y, '" width="', wdt, '" height="',
-    hgt, '" fill="', ColorToHex(Data.BrushColor), '" stroke="', ColorToHex(
-    Data.PenColor), '" stroke-width="', Data.Width, '"  />');
+  writeln(output, '  <rect x="', X, '" y="', Y, '" width="', Width, '" height="',
+    Height, '" fill="', ColorToHex(Data.BrushColor), '" stroke="',
+    ColorToHex(Data.PenColor), '" stroke-width="', Data.Width, '"  />');
 end;
 
-procedure TEllipse.Draw(x, y: integer);
+procedure TEllipse.Draw(X, Y: integer);
 var
-  r: trect;
+  Rect_: trect;
+  X_: integer;
+  Y_: integer;
 begin
-  Setlength(Coord, 4);
-  Coord[2] := x;
-  Coord[3] := y;
-  r := bounds(0, 0, FTmpCanvas.Width, FTmpCanvas.Height);
-  FCanvas.Canvas.CopyRect(rect(0, 0, FCanvas.Width, FCanvas.Height),
-    FTmpCanvas.canvas, r);
-  FCanvas.Canvas.Ellipse(Coord[0], Coord[1], x, y);
+  Setlength(ToolCoords, 4);
+  ToolCoords[2] := X;
+  ToolCoords[3] := Y;
+  Rect_ := bounds(0, 0, FTmpScene.Width, FTmpScene.Height);
+  FScene.Canvas.CopyRect(Rect(0, 0, FScene.Width, FScene.Height),
+    FTmpScene.canvas, Rect_);
+  X_ := ToolCoords[0];
+  Y_ := ToolCoords[1];
+  Zoom.CoordAllignment(X_, X, Y_, Y);
+  FScene.Canvas.Ellipse(X_, Y_, X, Y);
 end;
 
 procedure TEllipse.ExportToSvg(var output: TextFile; Data: ToolData);
 var
-  cx, cy, rx, ry: integer;
+  CX: integer;
+  CY: integer;
+  RX: integer;
+  RY: integer;
 begin
-  cx := (Data.Coord[0] + Data.coord[2]) div 2;
-  cy := (Data.Coord[1] + Data.coord[3]) div 2;
-  rx := abs(Data.coord[2] - cx);
-  ry := abs(Data.coord[3] - cy);
-  writeln(output, '  <ellipse cx="', cx, '" cy="', cy, '" rx="', rx, '" ry="', ry,
+  CX := (Data.ToolCoords[0] + Data.ToolCoords[2]) div 2;
+  CY := (Data.ToolCoords[1] + Data.ToolCoords[3]) div 2;
+  RX := abs(Data.ToolCoords[2] - CX);
+  RY := abs(Data.ToolCoords[3] - CY);
+  writeln(output, '  <ellipse cx="', CX, '" cy="', CY, '" rx="', RX, '" ry="', RY,
     '" fill="', ColorToHex(Data.BrushColor), '" stroke="', ColorToHex(
     Data.PenColor), '" stroke-width="', Data.Width, '"  />');
 end;
 
-procedure TPen.Draw(x, y: integer);
+procedure TPen.Draw(X, Y: integer);
 var
-  PreX, PreY: integer;
+  PreX: integer;
+  PreY: integer;
 begin
-  PreX := Coord[high(Coord) - 1];
-  PreY := Coord[high(Coord)];
-  Setlength(Coord, length(coord) + 2);
-  Coord[high(coord) - 1] := x;
-  Coord[high(coord)] := y;
-  FCanvas.canvas.line(PreX, PreY, x, y);
+  PreX := ToolCoords[high(ToolCoords) - 1];
+  PreY := ToolCoords[high(ToolCoords)];
+  Setlength(ToolCoords, length(ToolCoords) + 2);
+  ToolCoords[high(ToolCoords) - 1] := X;
+  ToolCoords[high(ToolCoords)] := Y;
+  Zoom.CoordAllignment(PreX, X, PreY, Y);
+  FScene.canvas.line(PreX, PreY, X, Y);
 end;
 
 procedure TPen.ExportToSvg(var output: TextFile; Data: ToolData);
@@ -310,27 +360,28 @@ begin
     Data.PenColor), '" stroke-width="', Data.Width, '"');
   writeln(output, '  points="');
   i := 0;
-  while i <= high(Data.Coord) do begin
-    Write(output, Data.coord[i], ',', Data.coord[i + 1], ' ');
+  while i <= high(Data.ToolCoords) do begin
+    Write(output, Data.ToolCoords[i], ',', Data.ToolCoords[i + 1], ' ');
     i += 2;
   end;
   Write(output, '" />');
 end;
 
-procedure TFill.BeforeDraw(x, y: integer; Button: TMouseButton);
+procedure TFill.BeforeDraw(X, Y: integer; Button: TMouseButton);
 var
-  pColor: TColor;
+  PixelColor: TColor;
 begin
-  inherited BeforeDraw(x, y, Button);
-  pColor := FCanvas.canvas.Pixels[x, y];
-  FCanvas.canvas.FloodFill(x, y, pcolor, TFillStyle.fsSurface);
+  inherited BeforeDraw(X, Y, Button);
+  PixelColor := FScene.canvas.Pixels[X, Y];
+  Zoom.CoordAllignment(NULL, X, NULL, Y);
+  FScene.canvas.FloodFill(X, Y, PixelColor, TFillStyle.fsSurface);
 end;
 
-procedure TFill.Draw(x, y: integer);
+procedure TFill.Draw(X, Y: integer);
 begin { nothing }
 end;
 
-procedure TFill.ExportToSvg(var output: TextFile; Data: ToolData);
+procedure TFill.ExportToSvg(var Output: TextFile; Data: ToolData);
 begin { nothing }
 end;
 
@@ -342,114 +393,150 @@ procedure TSpecTools.AddCoordsToHistory(Coordinates: Coords);
 begin { nothing }
 end;
 
-procedure TSpecTools.Draw(x, y: integer);
+procedure TSpecTools.Draw(X, Y: integer);
+begin { nothing }
+end;
+
+procedure TZoom.ToGlobalCoords(var X, Y: integer);
+begin { nothing }
+end;
+
+procedure TZoom.ShowHistoryWhenZoomed;
+begin { nothing }
+end;
+
+procedure TArm.ShowHistoryWhenZoomed;
 begin { nothing }
 end;
 
 { ToolsDataUtils }
-constructor TToolsDataUtils.Create(var PaintBox_: TPaintbox; var Holst_: tbitmap);
+constructor TToolsDataUtils.Create(var PaintBox_: TPaintbox; var Scene: tbitmap);
 begin
-  position := -1;
-  FCanvas := Holst_;
+  HistoryPos := -1;
+  FScene := Scene;
   FPaintBox := PaintBox_;
 end;
 
-procedure TToolsDataUtils.ShowHistory(x_param, y_param, delta_param: integer);
+procedure TToolsDataUtils.ShowHistory(X_, Y_: integer);
 var
-  i, j: integer;
-  tool: TTools;
+  i: integer;
+  j: integer;
+  Tool: TTools;
   NullBtn: TmouseButton;
+  Delta_: integer;
 begin
+  Delta_ := 1 shl Zoom.ZoomValue;
   NullBtn := mbRight;
-  delta_param := 1 shl delta_param;
   SaveColors;
-  with FCanvas.Canvas do begin
-    pen.color := clWhite;
-    brush.color := clWhite;
-    brush.style := bsSolid;
-  end;
-  FCanvas.Canvas.rectangle(0, 0, FCanvas.Width, FCanvas.Height);
-  for i := 0 to position do begin
-    tool := classref[Data[i].Noftool].Tool.Create(FCanvas);
-    with Data[i] do begin
-      FCanvas.Canvas.pen.color := PenColor;
-      FCanvas.Canvas.brush.color := BrushColor;
-      FCanvas.Canvas.brush.Style := BrushStyle;
-      FCanvas.Canvas.pen.Width := Width;
-      tool.BeforeDraw((coord[0] - x_param) * delta_param, (coord[1] - y_param) *
-        delta_param, NullBtn);
-      j := 2;
-      while j <= high(coord) do begin
-        tool.Draw((coord[j] - x_param) * delta_param, (coord[j + 1] - y_param) *
-          delta_param);
-        j += 2;
-      end;
-      tool.AfterDraw;
+  FScene.Canvas.pen.color := clWhite;
+  FScene.Canvas.brush.Color := clWhite;
+  FScene.Canvas.brush.style := bsSolid;
+  FScene.Canvas.rectangle(0, 0, FScene.Width, FScene.Height);
+  for i := 0 to HistoryPos do begin
+    Tool := classref[FData[i].Noftool].Tool.Create(FScene);
+    FScene.Canvas.pen.color := FData[i].PenColor;
+    FScene.Canvas.brush.Color := FData[i].BrushColor;
+    FScene.Canvas.brush.Style := FData[i].BrushStyle;
+    FScene.Canvas.pen.Width := FData[i].Width;
+    Tool.BeforeDraw((FData[i].ToolCoords[0] - X_) * Delta_,
+      (FData[i].ToolCoords[1] - Y_) * Delta_, NullBtn);
+    j := 2;
+    while j <= high(FData[i].ToolCoords) do begin
+      Tool.Draw((FData[i].ToolCoords[j] - X_) * Delta_,
+        (FData[i].ToolCoords[j + 1] - Y_) * Delta_);
+      j += 2;
     end;
-    tool.Free;
+    Tool.AfterDraw;
+    Tool.Free;
   end;
   LoadColors;
   FPaintBox.Invalidate;
 end;
 
-procedure TToolsDataUtils.Add(Name, wdt: integer; Pcolor, Bcolor: tcolor;
-  Style: TBrushStyle);
+procedure TToolsDataUtils.Add(NofTool_, Width_: integer;
+  PenColor_, BrushColor_: tcolor; BrushStyle_: TBrushStyle);
 begin
-  if position < length(Data) - 1 then
-    SetLength(Data, Position + 1 + 1)
+  if HistoryPos < length(FData) - 1 then
+    SetLength(FData, HistoryPos + 1 + 1)
   else
-    setlength(Data, length(Data) + 1);
-  position += 1;
-  with Data[high(Data)] do begin
-    NofTool := Name;
-    PenColor := Pcolor;
-    BrushColor := Bcolor;
-    BrushStyle := Style;
-    Width := wdt;
+    SetLength(FData, length(FData) + 1);
+  HistoryPos += 1;
+  FData[high(FData)].NofTool := NofTool_;
+  FData[high(FData)].PenColor := PenColor_;
+  FData[high(FData)].BrushColor := BrushColor_;
+  FData[high(FData)].BrushStyle := BrushStyle_;
+  FData[high(FData)].Width := Width_;
+end;
+
+procedure TToolsDataUtils.Delete(Num: integer);
+var
+  i: integer;
+begin
+  if num > -1 then begin
+    for i := num to length(FData) - 2 do
+      FData[i] := FData[i + 1];
+    HistoryPos -= 1;
+    SetLength(FData, length(FData) - 1);
+    ShowHistory(Zoom.PreviousX, Zoom.PreviousY);
   end;
 end;
 
 procedure TToolsDataUtils.AddCoords(var Coordinates: Coords);
 begin
-  Data[high(Data)].Coord := Coordinates;
+  FData[high(FData)].ToolCoords := Coordinates;
 end;
 
-procedure TToolsDataUtils.Undo(x_param, y_param, delta_param: integer);
+procedure TToolsDataUtils.Undo(X_, Y_: integer);
 begin
-  if position > -1 then
-    position -= 1;
-  ShowHistory(x_param, y_param, delta_param);
+  if HistoryPos > -1 then
+    HistoryPos -= 1;
+  Zoom.CoordAllignment(X_, NULL, Y_, NULL);
+  ShowHistory(X_, Y_);
 end;
 
-procedure TToolsDataUtils.Redo(x_param, y_param, delta_param: integer);
+procedure TToolsDataUtils.Redo(X_, Y_: integer);
 begin
-  if position < high(Data) then
-    position += 1;
-  ShowHistory(x_param, y_param, delta_param);
+  if HistoryPos < high(FData) then
+    HistoryPos += 1;
+  Zoom.CoordAllignment(X_, NULL, Y_, NULL);
+  ShowHistory(X_, Y_);
 end;
 
 function TToolsDataUtils.GetLength: integer;
 begin
-  Result := length(Data);
+  Result := length(FData);
 end;
 
 function TToolsDataUtils.GetData(i: integer): ToolData;
 begin
-  Result := Data[i];
+  Result := FData[i];
 end;
 
-function TToolsDataUtils.IsFigureExists(x, y, inaccuracy: integer): integer;
-var
-  i, j: integer;
+function TToolsDataUtils.GetPosition: integer;
 begin
-  for i := 0 to position do begin
+  Result := HistoryPos;
+end;
+
+function TToolsDataUtils.IsFigureExists(X, Y, inaccuracy: integer): integer;
+var
+  i: integer;
+  j: integer;
+begin
+  for i := 0 to HistoryPos do begin
     j := 0;
-    with Data[i] do begin
-      while j <= high(coord) do begin
-        if (abs(x - Coord[j]) <= inaccuracy) and
-          (abs(y - Coord[j + 1]) <= inaccuracy) then begin
+    if length(FData[i].ToolCoords) = 4 then begin
+      if (X >= FData[i].ToolCoords[0]) and (X <= FData[i].ToolCoords[2]) then
+        if (Y >= FData[i].ToolCoords[1]) and (Y <= FData[i].ToolCoords[3]) then begin
           Result := i;
-          exit;
+          Exit;
+        end;
+    end
+    else begin
+      while j <= high(FData[i].ToolCoords) do begin
+        if (abs(X - FData[i].ToolCoords[j]) <= inaccuracy) and
+          (abs(Y - FData[i].ToolCoords[j + 1]) <= inaccuracy) then begin
+          Result := i;
+          Exit;
         end;
         j += 2;
       end;
@@ -460,65 +547,77 @@ end;
 
 procedure TToolsDataUtils.HighLightFigure(num: integer);
 var
-  i, x1, x2, y1, y2: integer;
-begin
-  with Data[num] do begin
-    x1 := 99999;
-    y1 := 99999;
-    x2 := -99999;
-    y2 := -99999;
-    i := 2;
-    while i <= high(Coord) do begin
-      if Coord[i] < x1 then
-        x1 := Coord[i];
-      if Coord[i] > x2 then
-        x2 := Coord[i];
-      if Coord[i + 1] < y1 then
-        y1 := Coord[i + 1];
-      if Coord[i + 1] > y2 then
-        y2 := Coord[i + 1];
-      i += 2;
-    end;
-  end;
-  SaveColors;
-  FCanvas.Canvas.Pen.Style := psDashDot;
-  FCanvas.Canvas.pen.Color := clRed;
-  FCanvas.Canvas.Rectangle(x1 - 3, y1 - 3, x2 + 3, y2 + 3);
-  FCanvas.Canvas.Pen.Style := psSolid;
-  LoadColors;
-end;
-
-procedure TToolsDataUtils.MovFigure(num, x_offset, y_offset: integer);
-var
   i: integer;
+  X1: integer;
+  X2: integer;
+  Y1: integer;
+  Y2: integer;
+  Delta_: integer;
 begin
-  with Data[num] do begin
-    i := 0;
-    while i <= high(Coord) do begin
-      Coord[i] += x_offset;
-      Coord[i + 1] += y_offset;
+  if length(FData) > 0 then begin
+    Delta_ := 1 shl Zoom.ZoomValue;
+    with FData[num] do begin
+      X1 := 99999;
+      Y1 := 99999;
+      X2 := -99999;
+      Y2 := -99999;
+      i := 2;
+      if length(ToolCoords) = 4 then begin
+        X1 := ToolCoords[0];
+        Y1 := ToolCoords[1];
+        X2 := ToolCoords[2];
+        Y2 := ToolCoords[3];
+      end
+      else begin
+        while i <= high(ToolCoords) do begin
+          if ToolCoords[i] < X1 then
+            X1 := ToolCoords[i];
+          if ToolCoords[i] > X2 then
+            X2 := ToolCoords[i];
+          if ToolCoords[i + 1] < Y1 then
+            Y1 := ToolCoords[i + 1];
+          if ToolCoords[i + 1] > Y2 then
+            Y2 := ToolCoords[i + 1];
+          i += 2;
+        end;
+      end;
     end;
+    SaveColors;
+    FScene.Canvas.Pen.Style := psDashDot;
+    FScene.Canvas.Pen.Width := 3;
+    FScene.Canvas.pen.Color := clRed;
+    X1 := (X1 - Zoom.PreviousX) * Delta_;
+    X2 := (X2 - Zoom.PreviousX) * Delta_;
+    Y1 := (Y1 - Zoom.PreviousY) * Delta_;
+    Y2 := (Y2 - Zoom.PreviousY) * Delta_;
+    FScene.Canvas.Rectangle(X1 - 3, Y1 - 3, X2 + 3, Y2 + 3);
+    FScene.Canvas.Pen.Style := psSolid;
+    LoadColors;
+    FPaintBox.Invalidate;
   end;
 end;
 
 procedure TToolsDataUtils.SaveColors;
 begin
-  with FCanvas.Canvas do begin
-    PrevPWidth := Pen.Width;
-    PrevPColor := pen.color;
-    PrevBColor := brush.color;
-    PrevBStyle := brush.style;
-  end;
+  PrevPWidth := FScene.Canvas.Pen.Width;
+  PrevPenColor := FScene.Canvas.Pen.color;
+  PrevBrushColor := FScene.Canvas.Brush.Color;
+  PrevBrushStyle := FScene.Canvas.Brush.style;
 end;
 
 procedure TToolsDataUtils.LoadColors;
 begin
-  with FCanvas.Canvas do begin
-    pen.Width := PrevPWidth;
-    pen.color := PrevPColor;
-    brush.color := PrevBColor;
-    Brush.Style := PrevBStyle;
-  end;
+  FScene.Canvas.Pen.Width := PrevPWidth;
+  FScene.Canvas.Pen.color := PrevPenColor;
+  FScene.Canvas.Brush.Color := PrevBrushColor;
+  FScene.Canvas.Brush.Style := PrevBrushStyle;
+end;
+
+procedure Init(Tool: ClassOfInstrument; NameOfTool: string);
+begin
+  SetLength(ClassRef, length(ClassRef) + 1);
+  ClassRef[high(ClassRef)].Tool := Tool;
+  ClassRef[high(ClassRef)].NameOfTool := NameOfTool;
 end;
 
 initialization

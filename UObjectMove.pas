@@ -9,66 +9,70 @@ uses
 
 type
   TObjectMove = class
-    constructor Create(border_width, border_height: integer);
-    procedure OnMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
-      X, Y: integer);
+    constructor Create(BorderWidth_, BorderHeight_: integer);
+    procedure OnMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: integer);
     procedure OnMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
-    procedure OnMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
-      X, Y: integer);
+    procedure OnMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: integer);
   private
     isMoving: boolean;
-    px, py, b_width, b_height: integer;
-    procedure ObjectMove(Obj: Twincontrol;x, y: integer);
+    PreviousX: integer;
+    PreviousY: integer;
+    BorderWidth: integer;
+    BorderHeight: integer;
+    procedure ObjectMove(Object_: Twincontrol; X, Y: integer);
   end;
 
 implementation
 
-constructor TObjectMove.Create(border_width, border_height: integer);
+constructor TObjectMove.Create(BorderWidth_, BorderHeight_: integer);
 begin
   isMoving := False;
-  b_width := border_width;
-  b_height := border_height;
+  BorderWidth := BorderWidth_;
+  BorderHeight := BorderHeight_;
 end;
 
-procedure TObjectMove.OnMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+procedure TObjectMove.OnMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: integer);
 begin
   isMoving := True;
-  px := x;
-  py := y;
+  PreviousX := X;
+  PreviousY := Y;
 end;
 
 procedure TObjectMove.OnMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
 begin
   if isMoving = True then begin
-    ObjectMove(twincontrol(Sender),x, y);
+    ObjectMove(twincontrol(Sender), X, Y);
   end;
 end;
 
-procedure TObjectMove.OnMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
-  X, Y: integer);
+procedure TObjectMove.OnMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: integer);
 begin
   isMoving := False;
 end;
 
-procedure TObjectMove.ObjectMove(Obj: Twincontrol;x, y: integer);
+procedure TObjectMove.ObjectMove(Object_: Twincontrol; X, Y: integer);
 var
-  newx, newy: integer;
+  NewX: integer;
+  NewY: integer;
 begin
-  newx := obj.Left + x - px;
-  newy := obj.top + y - py;
-  if (newx) >= (b_width - obj.Width) then
-    obj.Left := b_width - obj.Width
-  else if (newx) <= 0 then
-    obj.left := 0
+  NewX := Object_.Left + X - PreviousX;
+  NewY := Object_.Top + Y - PreviousY;
+  if NewX >= (BorderWidth - Object_.Width) then
+    Object_.Left := BorderWidth - Object_.Width
+  else if NewX <= 0 then
+    Object_.Left := 0
   else
-    obj.Left := newx;
-  if (newy) >= (b_height - obj.Height - 20) then
-    obj.top := b_height - obj.Height - 20
-  else if (newy) <= 0 then
-    obj.top := 0
+    Object_.Left := NewX;
+  if NewY >= (BorderHeight - Object_.Height - 20) then
+    Object_.Top := BorderHeight - Object_.Height - 20
+  else if NewY <= 0 then
+    Object_.Top := 0
   else
-    obj.top := newy;
+    Object_.Top := NewY;
 end;
 
 end.
