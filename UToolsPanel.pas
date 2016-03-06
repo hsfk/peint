@@ -6,78 +6,64 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, ExtCtrls,
-  StdCtrls, UTools, Graphics, Buttons, UToolsManager;
+  StdCtrls, UTools, Graphics, Buttons;
 
 type
   OnClickEvent = procedure(Sender: TObject) of object;
 
   TToolsPanel = class(TPanel)
   public
-    constructor Create(parent_: TComponent; List: TImageList);
+    constructor Create(Parent_: TComponent; List: TImageList; Scene: TCanvas);
   private
+    FScene: TCanvas;
     ToolsIcons: TImageList;
-    procedure AddButton(parent_: TComponent; tool_index: integer;
+    procedure AddButton(Parent_: TComponent; tool_index: integer;
       ClickEvent: OnClickEvent);
-    function GetTopPosition(i: integer): integer;
-    function GetLeftPosition(i: integer): integer;
     procedure ToolClickEvent(Sender: TObject);
   end;
 
 implementation
 
-constructor TToolsPanel.Create(parent_: TComponent; List: TImageList);
+constructor TToolsPanel.Create(Parent_: TComponent; List: TImageList; Scene: TCanvas);
 var
   i: integer;
 begin
+  FScene := Scene;
   ToolsIcons := List;
-  inherited Create(parent_);
-  with self do begin
-    Parent := twincontrol(parent_);
+  inherited Create(Parent_);
+  with Self do begin
+    Parent := TWinControl(Parent_);
     Width := 5 + 40 + 5;
-    Height := 20 * (high(ClassRef) + 1);
+    Height := 20 + 40 * Length(Tools) + 5;
     BevelInner := bvRaised;
-    BevelOuter:= bvLowered;
+    BevelOuter := bvLowered;
   end;
-  for i := 0 to high(ClassRef) do
+  for i := 0 to High(Tools) do
     AddButton(self, i, @ToolClickEvent);
 end;
 
-procedure TToolsPanel.AddButton(parent_: TComponent; tool_index: integer;
+procedure TToolsPanel.AddButton(Parent_: TComponent; tool_index: integer;
   ClickEvent: OnClickEvent);
 var
-  button: TSpeedButton;
+  Button: TSpeedButton;
 begin
-  button := TSpeedButton.Create(parent_);
-  with button do begin
-    parent := twincontrol(parent_);
-    Width := 20;
-    Height := 20;
+  Button := TSpeedButton.Create(Parent_);
+  with Button do begin
+    Parent := TWinControl(Parent_);
+    Width := 40;
+    Height := 40;
     ToolsIcons.GetBitmap(tool_index, glyph);
-    top := GetTopPosition(tool_index);
-    left := GetLeftPosition(tool_index);
-    tag := tool_index;
+    Top := 20 + tool_index * 40;
+    Left := 5;
+    Tag := tool_index;
     OnClick := ClickEvent;
   end;
 end;
 
-function TToolsPanel.GetTopPosition(i: integer): integer;
-begin
-  Result := 20 + (18 * (i - i mod 2));
-  if i > 1 then
-    Result -= 18;
-  Result -= trunc(i / 4) * 18;
-end;
-
-function TToolsPanel.GetLeftPosition(i: integer): integer;
-begin
-  Result := 5 + (i mod 2) * 18;
-end;
-
 procedure TToolsPanel.ToolClickEvent(Sender: TObject);
 begin
-    ToolsManager.FTool.Free;
-    ToolsManager.FToolTag := TButton(Sender).tag;
-    ToolsManager.FTool := ClassRef[TButton(Sender).tag].Tool.Create(ToolsManager.FCanvas);
+  CurrentToolIndex := TButton(Sender).tag;
+  Tool := Tools[CurrentToolIndex].Tool.Create(FScene);
 end;
 
 end.

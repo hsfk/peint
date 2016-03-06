@@ -5,7 +5,7 @@ unit UScrollBar;
 interface
 
 uses
-  Classes, SysUtils, Graphics, StdCtrls, Controls, Forms, Dialogs, UZoom, UTools;
+  Classes, SysUtils, Graphics, StdCtrls, Controls, Forms, Dialogs, UTools;
 
 type
 
@@ -60,22 +60,22 @@ end;
 
 procedure TZoomScrollBar.Invalidate;
 begin
-  with Zoom do begin
-    HorizontalBar.PageSize := HorizontalBar.Max div (1 shl ZoomValue);
-    VerticalBar.PageSize := VerticalBar.Max div (1 shl ZoomValue);
-    HorizontalBar.Position := PreviousX;
-    VerticalBar.Position := PreviousY;
-  end;
+  //with Zoom do begin
+  //  HorizontalBar.PageSize := HorizontalBar.Max div (1 shl ZoomValue);
+  //  VerticalBar.PageSize := VerticalBar.Max div (1 shl ZoomValue);
+  //  HorizontalBar.Position := PreviousX;
+  //  VerticalBar.Position := PreviousY;
+  //end;
 end;
 
 procedure TZoomScrollBar.OnChangeEvent(Sender: TObject; ScrollCode: TScrollCode;
   var ScrollPos: integer);
 begin
-  with Zoom do begin
-    PreviousX := HorizontalBar.position;
-    PreviousY := VerticalBar.position;
-    ToolsDataUtils.ShowHistory(PreviousX, PreviousY);
-  end;
+  //with Zoom do begin
+  //  PreviousX := HorizontalBar.position;
+  //  PreviousY := VerticalBar.position;
+  //  ToolsDataUtils.ShowHistory(PreviousX, PreviousY);
+  //end;
 end;
 
 end.

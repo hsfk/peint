@@ -33,7 +33,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="9">
+    <Units Count="12">
       <Unit0>
         <Filename Value="peint.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -46,33 +46,46 @@
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="UTools.pas"/>
+        <Filename Value="UPalette.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="UPalette.pas"/>
+        <Filename Value="UObjectMove.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="UObjectMove.pas"/>
+        <Filename Value="UToolsPanel.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="UToolsPanel.pas"/>
+        <Filename Value="UScrollBar.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="UToolsManager.pas"/>
+        <Filename Value="UFigureHistoryManager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="UScrollBar.pas"/>
+        <Filename Value="UFigure.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="UFigureHistoryManager.pas"/>
+        <Filename Value="UHistory.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
+      <Unit9>
+        <Filename Value="uzoom.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UZoom"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="UPointUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="UTools.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

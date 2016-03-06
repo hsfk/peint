@@ -5,7 +5,7 @@ unit UFigureHistoryManager;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls, UTools, Menus, UZoom;
+  Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls, UTools, Menus;
 
 type
   TFigureHistoryManager = class(Tpanel)
@@ -46,25 +46,28 @@ var
   i: integer;
   Text_: string;
 begin
-  FListBox.Items.Clear;
-  for i := 0 to ToolsDataUtils.GetPosition do begin
-    Text_ := IntToStr(i) + '. ' +
-      ClassRef[ToolsDataUtils.GetData(i).NofTool].NameOfTool;
-    FlistBox.Items.Add(Text_);
-  end;
+  //FListBox.Items.Clear;
+  //for i := 0 to ToolsDataUtils.GetPosition do begin
+  //  Text_ := IntToStr(i) + '. ' +
+  //    ClassRef[ToolsDataUtils.GetData(i).NofTool].NameOfTool;
+  //  FlistBox.Items.Add(Text_);
+  //end;
 end;
 
 procedure TFigureHistoryManager.OnMouseDownEvent(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 begin
-  if Button = mbLeft then begin
-    ToolsDataUtils.ShowHistory(Zoom.PreviousX, Zoom.PreviousY);
-    ToolsDataUtils.HighLightFigure(FListBox.ItemIndex);
-  end;
-  if Button = mbRight then begin
-    ToolsDataUtils.Delete(FListBox.ItemIndex);
-    LoadHistory;
-  end;
+  //if Button = mbLeft then begin
+  //  X := Zoom.PreviousX;
+  //  Y := Zoom.PreviousY;
+  //  Zoom.CoordAllignment(X, NULL, Y, NULL);
+  //  ToolsDataUtils.ShowHistory(X, Y);
+  //  ToolsDataUtils.HighLightFigure(FListBox.ItemIndex);
+  //end;
+  //if Button = mbRight then begin
+  //  ToolsDataUtils.Delete(FListBox.ItemIndex);
+  //  LoadHistory;
+  //end;
 end;
 
 constructor TFigureListBox.Create(Parent_: TComponent);

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, ExtCtrls,
-  StdCtrls, Dialogs, UToolsManager;
+  StdCtrls, Dialogs;
 
 type
   BrushStyleCbox = record
@@ -14,20 +14,23 @@ type
     Style: TBrushStyle;
   end;
 
-  TPalette = class(TPanel)
+  TPaletteCBox = class(TComboBox)
   public
-    constructor Create(Parent_: TComponent);
+    BrushStyles: array of BrushStyleCbox;
+    constructor Create(Parent_: TComponent; Top_, Left_: integer; Scene: TCanvas);
   private
-    isExtended: boolean;
-    procedure CreateExtentionButton(Parent_: TComponent; Top_, Left_: integer);
-    procedure ExtButtonClickEvent(Sender: TObject);
+    FScene: TCanvas;
+    procedure InitStyle(Name_: string; Style_: TbrushStyle);
+    procedure OnSelectEvent(Sender: TObject);
   end;
 
   TPaletteShape = class(TShape)
   public
-    constructor Create(Parent_: TComponent);
+    BrushShape: TShape;
+    constructor Create(Parent_: TComponent; Scene: TCanvas);
   private
-    PenShape, BrushShape: TShape;
+    FScene: TCanvas;
+    PenShape: TShape;
     procedure CreatePalette(Parent_: TComponent; Top_, Left_: integer);
     procedure CreatePenShape(Parent_: TComponent; Top_, Left_: integer);
     procedure CreateBrushShape(Parent_: TComponent; Top_, Left_: integer);
@@ -40,17 +43,22 @@ type
       Shift: TShiftState; X, Y: integer);
   end;
 
-  TPaletteCBox = class(TComboBox)
-    constructor Create(Parent_: TComponent; Top_, Left_: integer);
+  TPalette = class(TPanel)
+  public
+    PaletteCBox: TPaletteCBox;
+    PaletteShape: TPaletteShape;
+    constructor Create(Parent_: TComponent; Scene: TCanvas);
   private
-    BrushStyles: array of BrushStyleCbox;
-    procedure InitStyle(Name_: string; Style_: TbrushStyle);
-    procedure OnSelectEvent(Sender: TObject);
+    FScene: TCanvas;
+    IsExtended: boolean;
+    procedure CreateExtentionButton(Parent_: TComponent; Top_, Left_: integer);
+    procedure ExtButtonClickEvent(Sender: TObject);
   end;
 
   TPaletteEdit = class(TEdit)
-    constructor Create(Parent_: TComponent; Top_, Left_: integer);
+    constructor Create(Parent_: TComponent; Top_, Left_: integer; Scene: TCanvas);
   private
+    FScene: TCanvas;
     procedure CreateIncButton(Parent_: TComponent; Top_, Left_: integer);
     procedure CreateDecButton(Parent_: TComponent; Top_, Left_: integer);
     procedure ButtonClickEvent(Sender: TObject);
@@ -60,23 +68,24 @@ type
 
 implementation
 
-constructor TPalette.Create(Parent_: TComponent);
+constructor TPalette.Create(Parent_: TComponent; Scene: TCanvas);
 begin
-  isExtended := True;
+  FScene := Scene;
+  IsExtended := True;
   inherited Create(Parent_);
-  with self do begin
+  with Self do begin
     Top := 0;
     Parent := twincontrol(Parent_);
     Width := 155;
     Height := 203;
     Left := 660;
     BevelInner := bvRaised;
-    BevelOuter:= bvLowered;
+    BevelOuter := bvLowered;
   end;
   CreateExtentionButton(Self, 68, 120);
-  TPaletteShape.Create(Self);
-  TPaletteCBox.Create(Self, 42, 55);
-  TPaletteEdit.Create(Self, 15, 105);
+  PaletteShape := TPaletteShape.Create(Self, FScene);
+  PaletteCBox := TPaletteCBox.Create(Self, 42, 55, FScene);
+  TPaletteEdit.Create(Self, 15, 105, FScene);
 end;
 
 procedure TPalette.CreateExtentionButton(Parent_: TComponent; Top_, Left_: integer);
@@ -97,23 +106,25 @@ end;
 
 procedure TPalette.ExtButtonClickEvent(Sender: TObject);
 begin
-  if isExtended = True then begin
+  if IsExtended = True then begin
     Self.Height := 88;
     TButton(Sender).Caption := '▼';
-    isExtended := False;
+    IsExtended := False;
   end
-  else if isExtended = False then begin
+  else if IsExtended = False then begin
     Self.Height := 203;
     TButton(Sender).Caption := '▲';
-    isExtended := True;
+    IsExtended := True;
   end;
 end;
 
-constructor TPaletteShape.Create(Parent_: TComponent);
+constructor TPaletteShape.Create(Parent_: TComponent; Scene: TCanvas);
 var
-  i, j: integer;
+  i: integer;
+  j: integer;
 begin
-  randomize;
+  FScene := Scene;
+  Randomize;
   for i := 0 to 9 do
     for j := 0 to 12 do
       CreatePalette(Parent_, i * 11 + 88, j * 11 + 5);
@@ -176,15 +187,14 @@ var
   PStyle: TBrushStyle;
 begin
   if Button = mbLeft then begin
-    ToolsManager.FCanvas.Canvas.Pen.Color := Tshape(Sender).Brush.Color;
+    FScene.Pen.Color := Tshape(Sender).Brush.Color;
     PenShape.Brush.Color := Tshape(Sender).Brush.Color;
   end;
   if Button = mbRight then begin
-    PStyle := ToolsManager.FCanvas.Canvas.Brush.Style;
-    ToolsManager.FCanvas.Canvas.Brush.Color := Tshape(Sender).Brush.Color;
+    PStyle := FScene.Brush.Style;
+    FScene.Brush.Color := Tshape(Sender).Brush.Color;
     BrushShape.Brush.Color := Tshape(Sender).Brush.Color;
-    ToolsManager.FCanvas.Canvas.Brush.Style := PStyle;
-
+    FScene.Brush.Style := PStyle;
   end;
 end;
 
@@ -195,7 +205,7 @@ begin
   ColorDialog := TColorDialog.Create(Self);
   if ColorDialog.Execute then begin
     TShape(Sender).Brush.Color := ColorDialog.Color;
-    ToolsManager.FCanvas.Canvas.Pen.Color := Tshape(Sender).Brush.Color;
+    Canvas.Pen.Color := Tshape(Sender).Brush.Color;
     PenShape.Brush.Color := Tshape(Sender).Brush.Color;
   end;
 end;
@@ -208,7 +218,7 @@ begin
   ColorDialog := TColorDialog.Create(Self);
   if ColorDialog.Execute then begin
     TShape(Sender).Brush.Color := ColorDialog.Color;
-    ToolsManager.FCanvas.Canvas.Pen.Color := Tshape(Sender).Brush.Color;
+    FScene.Pen.Color := Tshape(Sender).Brush.Color;
   end;
 end;
 
@@ -221,16 +231,19 @@ begin
   ColorDialog := TColorDialog.Create(self);
   if ColorDialog.Execute then begin
     TShape(Sender).Brush.Color := ColorDialog.Color;
-    PrevStyle := ToolsManager.FCanvas.Canvas.brush.style;
-    ToolsManager.FCanvas.Canvas.Brush.Color := Tshape(Sender).Brush.Color;
-    ToolsManager.FCanvas.Canvas.Brush.Style := PrevStyle;
+    PrevStyle := FScene.brush.style;
+    FScene.Brush.Color := Tshape(Sender).Brush.Color;
+    FScene.Brush.Style := PrevStyle;
   end;
 end;
 
-constructor TPaletteCBox.Create(Parent_: TComponent; Top_, Left_: integer);
+constructor TPaletteCBox.Create(Parent_: TComponent; Top_, Left_: integer;
+  Scene: TCanvas);
 var
   i: integer;
 begin
+  FScene := Scene;
+
   InitStyle('Horizontal', bsHorizontal);
   InitStyle('Solid', bsSolid);
   InitStyle('Clear', bsClear);
@@ -266,11 +279,13 @@ end;
 
 procedure TPaletteCBox.OnSelectEvent(Sender: TObject);
 begin
-  ToolsManager.FCanvas.Canvas.Brush.Style := BrushStyles[Self.ItemIndex].Style;
+  FScene.Brush.Style := BrushStyles[Self.ItemIndex].Style;
 end;
 
-constructor TPaletteEdit.Create(Parent_: TComponent; Top_, Left_: integer);
+constructor TPaletteEdit.Create(Parent_: TComponent; Top_, Left_: integer;
+  Scene: TCanvas);
 begin
+  FScene := Scene;
   inherited Create(Parent_);
   with Self do begin
     Parent := twincontrol(Parent_);
@@ -337,7 +352,7 @@ end;
 
 procedure TPaletteEdit.EditingDoneEvent(Sender: TObject);
 begin
-  ToolsManager.FCanvas.Canvas.Pen.Width := StrToInt(Self.Text);
+  FScene.Pen.Width := StrToInt(Self.Text);
 end;
 
 end.

@@ -5,28 +5,29 @@ unit UZoom;
 interface
 
 uses
-  Classes, SysUtils, Graphics, Controls, Forms, Dialogs;
+  Classes, SysUtils, Controls, UPointUtils;
 
 type
-
   TZoom = class
   public
-    CurrentX: integer;
-    CurrentY: integer;
-    ZoomValue: integer;
-    PreviousX: integer;
-    PreviousY: integer;
-    constructor Create(Parent_: TComponent);
-    procedure CoordAllignment(var X1, X2, Y1, Y2: integer);
-    procedure ZoomOut;
+    constructor Create(Parent: TComponent);
     procedure ZoomIn;
-    procedure SetZoom(X, Y: integer);
-    function GetGlobalX(LocalX: integer): integer;
-    function GetGlobalY(LocalY: integer): integer;
-    function GetZoomValue: integer;
+    procedure ZoomOut;
+    procedure SetZoom(Point: TPoint);
+    function GetPrevScreenLocation: TPoint;
+    procedure SetPrevScreenLocation(Point : TPoint);
+    function ToGlobal(LocalPoint: TPoint): TPoint;
+    function ToScene(Points: TPoints): TPoints;
+    function ToScene(Point: TPoint): TPoint; overload;
   private
-    Width: integer;
-    Height: integer;
+    ZoomValue: integer;
+    PrevScreenLocation: TPoint;
+    CurrentScreenLocation: TPoint;
+    FWidth: integer;
+    FHeight: integer;
+    procedure RangeCheck(var Point: Tpoint);
+  published
+    property GetZoomValue: integer read ZoomValue;
   end;
 
 var
@@ -34,80 +35,76 @@ var
 
 implementation
 
-constructor TZoom.Create(Parent_: TComponent);
+constructor TZoom.Create(Parent: TComponent);
 begin
-  CurrentX := 0;
-  CurrentY := 0;
-  PreviousX := 0;
-  PreviousY := 0;
   ZoomValue := 0;
-  Width := twincontrol(Parent_).Width;
-  Height := twincontrol(Parent_).Height;
-end;
-
-procedure TZoom.CoordAllignment(var X1, X2, Y1, Y2: integer);
-begin
-  if Zoom.ZoomValue = 0 then begin
-    X1 -= Zoom.PreviousX;
-    X2 -= Zoom.PreviousX;
-    Y1 -= Zoom.PreviousY;
-    Y2 -= Zoom.PreviousY;
-  end;
-end;
-
-procedure TZoom.ZoomOut;
-begin
-  CurrentX := CurrentX div (1 shl (ZoomValue));
-  CurrentY := CurrentY div (1 shl (ZoomValue));
-  PreviousX := PreviousX - CurrentX;
-  PreviousY := PreviousY - CurrentY;
-  if ZoomValue > 0 then
-    ZoomValue -= 1;
-  if PreviousX < 0 then
-    PreviousX := 0;
-  if PreviousY < 0 then
-    PreviousY := 0;
-  if ZoomValue = 0 then begin
-    PreviousX := 0;
-    PreviousY := 0;
-  end;
+  PrevScreenLocation := null;
+  FWidth := twincontrol(Parent).Width;
+  FHeight := twincontrol(Parent).Height;
 end;
 
 procedure TZoom.ZoomIn;
 begin
-  CurrentX := CurrentX - Width div 4;
-  CurrentY := CurrentY - Height div 4;
-  if CurrentX < 0 then
-    CurrentX := 0;
-  if CurrentY < 0 then
-    CurrentY := 0;
+  CurrentScreenLocation.x := CurrentScreenLocation.x - FWidth div 4;
+  CurrentScreenLocation.y := CurrentScreenLocation.y - FHeight div 4;
+  RangeCheck(CurrentScreenLocation);
+  CurrentScreenLocation := ToGlobal(CurrentScreenLocation);
+  PrevScreenLocation := CurrentScreenLocation;
   if ZoomValue < 8 then
     ZoomValue += 1;
-  CurrentX := PreviousX + CurrentX div (1 shl (ZoomValue - 1));
-  CurrentY := PreviousY + CurrentY div (1 shl (ZoomValue - 1));
-  PreviousX := CurrentX;
-  PreviousY := CurrentY;
 end;
 
-procedure TZoom.SetZoom(X, Y: integer);
+procedure TZoom.ZoomOut;
 begin
-  CurrentX := X;
-  CurrentY := Y;
+  CurrentScreenLocation := CurrentScreenLocation / (1 shl ZoomValue);
+  PrevScreenLocation := PrevScreenLocation - CurrentScreenLocation;
+  RangeCheck(PrevScreenLocation);
+  if ZoomValue > 0 then
+    ZoomValue -= 1;
+  if ZoomValue = 0 then
+    PrevScreenLocation := null;
 end;
 
-function TZoom.GetGlobalX(LocalX: integer): integer;
+procedure TZoom.SetZoom(Point: TPoint);
 begin
-  Result := PreviousX + LocalX div (1 shl (ZoomValue));
+  CurrentScreenLocation := Point;
 end;
 
-function TZoom.GetGlobalY(LocalY: integer): integer;
+function TZoom.GetPrevScreenLocation: TPoint;
 begin
-  Result := PreviousY + LocalY div (1 shl (ZoomValue));
+  Result := PrevScreenLocation;
 end;
 
-function TZoom.GetZoomValue: integer;
+procedure TZoom.SetPrevScreenLocation(Point : TPoint);
 begin
-  Result := ZoomValue;
+  PrevScreenLocation := Point;
+end;
+
+function TZoom.ToGlobal(LocalPoint: TPoint): TPoint;
+begin
+  Result := PrevScreenLocation + LocalPoint / (1 shl ZoomValue);
+end;
+
+function TZoom.ToScene(Points: TPoints): TPoints;
+var
+  i: integer;
+begin
+  SetLength(Result, Length(Points));
+  for i := 0 to Length(Points) - 1 do
+    Result[i] := ToScene(Points[i]);
+end;
+
+function TZoom.ToScene(Point: TPoint): TPoint;
+begin
+  Result := (Point - Zoom.PrevScreenLocation) * (1 shl ZoomValue);
+end;
+
+procedure TZoom.RangeCheck(var Point: Tpoint);
+begin
+  if Point.x < 0 then
+    Point.x := 0;
+  if Point.y < 0 then
+    Point.y := 0;
 end;
 
 end.

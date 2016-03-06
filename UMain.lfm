@@ -9,7 +9,7 @@ object MainForm: TMainForm
   Menu = MainMenu
   OnCreate = FormCreate
   LCLVersion = '1.4.4.0'
-  object PaintBox: TPaintBox
+  object FMainScene: TPaintBox
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
@@ -21,10 +21,12 @@ object MainForm: TMainForm
     Top = 0
     Width = 923
     Anchors = [akTop, akLeft, akRight, akBottom]
-    OnMouseDown = PaintBoxMouseDown
-    OnMouseMove = PaintBoxMouseMove
-    OnMouseUp = PaintBoxMouseUp
-    OnPaint = PaintBoxPaint
+    Color = clWhite
+    ParentColor = False
+    OnMouseDown = FMainSceneMouseDown
+    OnMouseMove = FMainSceneMouseMove
+    OnMouseUp = FMainSceneMouseUp
+    OnPaint = FMainScenePaint
   end
   object ColorDialog: TColorDialog
     Color = clBlack
