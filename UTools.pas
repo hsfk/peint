@@ -73,7 +73,7 @@ type
 var
   Tools: array of Tool_;
   Tool: TTool;
-  CurrentToolIndex : Integer;
+  CurrentToolIndex: integer;
 
 implementation
 
@@ -111,13 +111,13 @@ end;
 constructor TPenTool.Create(Scene: TCanvas);
 begin
   inherited Create(Scene);
-  Figure := TPolyLine.Create(Scene);
+  Figure := TPolyLine.Create(Scene, 'Pen');
 end;
 
 constructor TPolyLineTool.Create(Scene: TCanvas);
 begin
   inherited Create(Scene);
-  Figure := TPolyLine.Create(Scene);
+  Figure := TPolyLine.Create(Scene, 'Poly line');
 end;
 
 procedure TPolyLineTool.Continue(Point: TPoint; Shift: TShiftState);
@@ -127,19 +127,19 @@ end;
 constructor TLineTool.Create(Scene: TCanvas);
 begin
   inherited Create(Scene);
-  Figure := TLine.Create(Scene);
+  Figure := TLine.Create(Scene, 'Line');
 end;
 
 constructor TRectangleTool.Create(Scene: TCanvas);
 begin
   inherited Create(Scene);
-  Figure := TRectangle.Create(Scene);
+  Figure := TRectangle.Create(Scene, 'Rectangle');
 end;
 
 constructor TEllipseTool.Create(Scene: TCanvas);
 begin
   inherited Create(Scene);
-  Figure := TEllipse.Create(Scene);
+  Figure := TEllipse.Create(Scene, 'Ellipse');
 end;
 
 procedure TZoomTool.Start(Point: TPoint; MButton: TMouseButton);
@@ -163,22 +163,21 @@ begin
   Zoom.SetPrevScreenLocation(PreviousScreenLocation + Offset);
 end;
 
-procedure InitTool(Tool: ToolClass; IsRecreatingRequired: boolean; Name: string);
+procedure InitTool(Tool: ToolClass; IsRecreatingRequired: boolean);
 begin
   SetLength(Tools, Length(Tools) + 1);
   Tools[High(Tools)].Tool := Tool;
   Tools[High(Tools)].Recreate := IsRecreatingRequired;
-  Tools[High(Tools)].Name := Name;
 end;
 
 initialization
 
-  InitTool(TPenTool, True, 'Pen');
-  InitTool(TPolyLineTool, False, 'Poly line');
-  InitTool(TLineTool, True, 'Line');
-  InitTool(TRectangleTool, True, 'Rectangle');
-  InitTool(TEllipseTool, True, 'Ellipse');
-  InitTool(TZoomTool, True, 'Zoom');
-  InitTool(THandTool, True, 'Hand');
+  InitTool(TPenTool, True);
+  InitTool(TPolyLineTool, False);
+  InitTool(TLineTool, True);
+  InitTool(TRectangleTool, True);
+  InitTool(TEllipseTool, True);
+  InitTool(TZoomTool, True);
+  InitTool(THandTool, True);
 
 end.

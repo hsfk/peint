@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, Buttons, Menus, ExtDlgs, UTools, UPalette,
   UObjectMove, UToolsPanel, UScrollBar, UFigureHistoryManager,
-  UHistory, UZoom, UPointUtils;
+  UHistory, UZoom, UPointUtils, UMainSceneUtils;
 
 type
 
@@ -57,7 +57,6 @@ var
   isMoving: boolean;
 
   Palette: TPalette;
-  PanelMove: TObjectMove;
   ToolsPanel: TToolsPanel;
   ScrollBar: TZoomScrollBar;
   FigureManager: TFigureHistoryManager;
@@ -73,22 +72,15 @@ begin
   MainForm.Constraints.MaxWidth := MainForm.Width;
   MainForm.Constraints.MinWidth := MainForm.Width;
 
-  PanelMove := TObjectMove.Create(MainForm.Width - 15 - 94, MainForm.Height - 15);
+  PanelMove := TObjectMove.Create(MainForm.Width - 15, MainForm.Height - 15);
   ScrollBar := TZoomScrollBar.Create(self);
-  FigureManager := TFigureHistoryManager.Create(self);
   History := THistory.Create(FMainScene.Canvas);
   Zoom := TZoom.Create(self);
   Tool := TPenTool.Create(FMainScene.Canvas);
-
-  Palette := TPalette.Create(self, FMainScene.Canvas);
-  Palette.OnMouseDown := @PanelMove.OnMouseDown;
-  Palette.OnMouseMove := @PanelMove.OnMouseMove;
-  Palette.OnMouseUp := @PanelMove.OnMouseUp;
-
-  ToolsPanel := TToolsPanel.Create(self, ToolsIconList, FMainScene.Canvas);
-  ToolsPanel.OnMouseDown := @PanelMove.OnMouseDown;
-  ToolsPanel.OnMouseMove := @PanelMove.OnMouseMove;
-  ToolsPanel.OnMouseUp := @PanelMove.OnMouseUp;
+  MainSceneUtils := TMainSceneUtils.Create(FMainScene.Canvas);
+  Palette := TPalette.Create(FMainScene.Canvas, Self, 0, Self.Width - 155 - 15);
+  FigureManager := TFigureHistoryManager.Create(Self, Palette.Height, Palette.Left);
+  ToolsPanel := TToolsPanel.Create(FMainScene.Canvas, Self, ToolsIconList);
 end;
 
 procedure TMainForm.FMainSceneMouseDown(Sender: TObject; Button: TMouseButton;
@@ -98,20 +90,18 @@ begin
     Tool := Tools[CurrentToolIndex].Tool.Create(FMainScene.Canvas);
   Tool.Start(ToPoint(X, Y), Button);
   IsDrawing := True;
-  //ScrollBar.Invalidate;
-  FMainScene.invalidate;
+  ScrollBar.Invalidate;
+  FigureManager.LoadHistory;
+  FMainScene.Invalidate;
 end;
 
 procedure TMainForm.FMainSceneMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: integer);
-var
-  col: TColor;
 begin
   if IsDrawing = True then begin
-    col := FMainScene.Canvas.Brush.Color;
     Tool.Continue(ToPoint(X, Y), Shift);
     FMainScene.Invalidate;
-    col := FMainScene.Canvas.Brush.Color;
+    ScrollBar.Invalidate;
   end;
 end;
 
@@ -121,30 +111,28 @@ begin
   if IsDrawing = True then begin
     Tool.Stop;
     IsDrawing := False;
-    //FigureManager.LoadHistory;
   end;
 end;
 
 procedure TMainForm.FMainScenePaint(Sender: TObject);
 begin
-  FMainScene.Canvas.Brush.Color := Palette.PaletteShape.BrushShape.Brush.Color;
-  FMainScene.Canvas.Brush.Style :=
-    Palette.PaletteCBox.BrushStyles[Palette.PaletteCBox.ItemIndex].Style;
-  History.SaveToolState(FMainScene.Canvas);
+  Palette.LoadToolState;
+  MainSceneUtils.SaveToolState;
   History.Show;
-  History.LoadToolState(FMainScene.Canvas);
-  col := FMainScene.Canvas.Brush.Color;
+  MainSceneUtils.LoadToolState;
 end;
 
 procedure TMainForm.UndoClick(Sender: TObject);
 begin
   History.Undo;
+  FigureManager.LoadHistory;
   FMainScene.Invalidate;
 end;
 
 procedure TMainForm.RedoClick(Sender: TObject);
 begin
   History.Redo;
+  FigureManager.LoadHistory;
   FMainScene.Invalidate;
 end;
 

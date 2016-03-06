@@ -5,74 +5,79 @@ unit UObjectMove;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, ExtCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, ExtCtrls, UPointUtils;
 
 type
   TObjectMove = class
-    constructor Create(BorderWidth_, BorderHeight_: integer);
+    constructor Create(ABorderWidth, ABorderHeight: integer);
     procedure OnMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure OnMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
     procedure OnMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
   private
-    isMoving: boolean;
-    PreviousX: integer;
-    PreviousY: integer;
-    BorderWidth: integer;
-    BorderHeight: integer;
-    procedure ObjectMove(Object_: Twincontrol; X, Y: integer);
+    FIsMoving: boolean;
+    FPreviousPos: TPoint;
+    FNewPosition: TPoint;
+    FBuffer: integer;
+    FBorderWidth: integer;
+    FBorderHeight: integer;
+    procedure ObjectMove(AObject: Twincontrol; Position: TPoint);
+    procedure BorderCheck(var ObjectPos: integer; ObjectSide, NewPos, Border: integer);
   end;
+
+var
+  PanelMove: TObjectMove;
 
 implementation
 
-constructor TObjectMove.Create(BorderWidth_, BorderHeight_: integer);
+constructor TObjectMove.Create(ABorderWidth, ABorderHeight: integer);
 begin
-  isMoving := False;
-  BorderWidth := BorderWidth_;
-  BorderHeight := BorderHeight_;
+  FIsMoving := False;
+  FBorderWidth := ABorderWidth;
+  FBorderHeight := ABorderHeight;
 end;
 
 procedure TObjectMove.OnMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  isMoving := True;
-  PreviousX := X;
-  PreviousY := Y;
+  FIsMoving := True;
+  FPreviousPos := ToPoint(X, Y);
 end;
 
 procedure TObjectMove.OnMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
 begin
-  if isMoving = True then begin
-    ObjectMove(twincontrol(Sender), X, Y);
+  if FIsMoving = True then begin
+    ObjectMove(twincontrol(Sender), ToPoint(X, Y));
   end;
 end;
 
 procedure TObjectMove.OnMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  isMoving := False;
+  FIsMoving := False;
 end;
 
-procedure TObjectMove.ObjectMove(Object_: Twincontrol; X, Y: integer);
-var
-  NewX: integer;
-  NewY: integer;
+procedure TObjectMove.ObjectMove(AObject: Twincontrol; Position: TPoint);
 begin
-  NewX := Object_.Left + X - PreviousX;
-  NewY := Object_.Top + Y - PreviousY;
-  if NewX >= (BorderWidth - Object_.Width) then
-    Object_.Left := BorderWidth - Object_.Width
-  else if NewX <= 0 then
-    Object_.Left := 0
+  FNewPosition := ToPoint(AObject.Left, AObject.Top) + Position - FPreviousPos;
+  FBuffer := AObject.Left;
+  BorderCheck(FBuffer, AObject.Width, FNewPosition.x, FBorderWidth);
+  AObject.Left := FBuffer;
+  FBuffer := AObject.Top;
+  BorderCheck(FBuffer, AObject.Height, FNewPosition.y, FBorderHeight);
+  AObject.Top := FBuffer;
+end;
+
+procedure TObjectMove.BorderCheck(var ObjectPos: integer;
+  ObjectSide, NewPos, Border: integer);
+begin
+  if NewPos >= Border - ObjectSide then
+    ObjectPos := Border - ObjectSide
+  else if NewPos < 0 then
+    ObjectPos := 0
   else
-    Object_.Left := NewX;
-  if NewY >= (BorderHeight - Object_.Height - 20) then
-    Object_.Top := BorderHeight - Object_.Height - 20
-  else if NewY <= 0 then
-    Object_.Top := 0
-  else
-    Object_.Top := NewY;
+    ObjectPos := NewPos;
 end;
 
 end.

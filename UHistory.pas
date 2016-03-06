@@ -5,7 +5,7 @@ unit UHistory;
 interface
 
 uses
-  Classes, SysUtils, UFigure, Graphics;
+  Classes, SysUtils, UFigure, Graphics, UMainSceneUtils;
 
 type
   Nodeptr = ^Node;
@@ -24,19 +24,13 @@ type
     procedure Show;
     procedure Undo;
     procedure Redo;
-    procedure SaveToolState(Scene : TCanvas);
-    procedure LoadToolState(Scene : TCanvas);
+    function DataLength : Integer;
+    function GetFigure(Index : Integer) : TFigure;
   private
     HistoryPosition: Nodeptr;
     FScene: TCanvas;
-    PenWidth: integer;
-    PenColor: TColor;
-    PenStyle: TPenStyle;
-    BrushColor: TColor;
-    BrushStyle: TBrushStyle;
     FHead: Nodeptr;
     FTail: Nodeptr;
-    procedure ClearScene;
     procedure CopyLastAction;
     procedure PushBack(Node: Nodeptr);
     procedure Delete(Node: Nodeptr);
@@ -85,18 +79,10 @@ procedure THistory.Show;
 var
   i: integer;
 begin
-  ClearScene;
+  MainSceneUtils.ClearScene;
   if HistoryPosition <> FHead then
     for i := 0 to Length(HistoryPosition^.Data) - 1 do
       HistoryPosition^.Data[i].Draw;
-end;
-
-procedure THistory.ClearScene;
-begin
-  FScene.Pen.Color := clWhite;
-  FScene.Brush.Color := clWhite;
-  FScene.Brush.Style := bsSolid;
-  FScene.Rectangle(0, 0, FScene.Width, FScene.Height);
 end;
 
 procedure THistory.Undo;
@@ -113,22 +99,14 @@ begin
   Show;
 end;
 
-procedure THistory.SaveToolState(Scene : TCanvas);
+function THistory.DataLength : Integer;
 begin
-  PenWidth := Scene.Pen.Width;
-  PenColor := Scene.Pen.Color;
-  PenStyle := Scene.Pen.Style;
-  BrushColor := Scene.Brush.Color;
-  BrushStyle := SCene.Brush.Style;
+  Result := Length(HistoryPosition^.Data);
 end;
 
-procedure THistory.LoadToolState(Scene : TCanvas);
+function THistory.GetFigure(Index : Integer) : TFigure;
 begin
-  Scene.Pen.Width := PenWidth;
-  Scene.Pen.Color := PenColor;
-  Scene.Pen.Style := PenStyle;
-  Scene.Brush.Color := BrushColor;
-  SCene.Brush.Style := BrushStyle;
+  Result := HistoryPosition^.Data[Index];
 end;
 
 procedure THistory.CopyLastAction;

@@ -5,81 +5,80 @@ unit UFigureHistoryManager;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls, UTools, Menus;
+  Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls, UTools,
+  Menus, UHistory, UCustomControls, UObjectMove, UEditPanel;
 
 type
-  TFigureHistoryManager = class(Tpanel)
+
+  TFigureHistoryManager = class(TACustomPanel)
   public
-    constructor Create(Parent_: TComponent);
+    constructor Create(AParent: TComponent; ATop, ALeft: integer);
     procedure LoadHistory;
   private
+    FEditPanel: TEditPanel;
     FListBox: TListBox;
-    procedure OnMouseDownEvent(Sender: TObject; Button: TMouseButton;
+    FEditButton: TCustomButton;
+    FDelButton: TCustomButton;
+    procedure ListBoxMouseDownEvent(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
-  end;
-
-  TFigureListBox = class(TListBox)
-  public
-    constructor Create(Parent_: TComponent);
+    procedure EditButtonClickEvent(Sender: TObject);
+    procedure DelButtonClickEvent(Sender: TObject);
   end;
 
 implementation
 
-constructor TFigureHistoryManager.Create(Parent_: TComponent);
+constructor TFigureHistoryManager.Create(AParent: TComponent; ATop, ALeft: integer);
 begin
-  inherited Create(Parent_);
-  with Self do begin
-    Parent := twincontrol(Parent_);
-    Width := 95;
-    Height := twincontrol(Parent_).Height - 35 - 1;
-    BevelOuter := bvLowered;
-    Left := twincontrol(Parent_).Width - 60 - 15 - 35 - 1;
-    Top := 0;
-  end;
+  inherited Create(AParent, ATop, ALeft, 155, 320);
+  Self.OnMouseDown := @PanelMove.OnMouseDown;
+  Self.OnMouseMove := @PanelMove.OnMouseMove;
+  Self.OnMouseUp := @PanelMove.OnMouseUp;
+  Self.BevelInner := bvRaised;
+  Self.BevelOuter := bvLowered;
 
-  FListBox := TFigureListBox.Create(Parent_);
-  FListBox.OnMouseDown := @OnMouseDownEvent;
+  FEditButton := TACustomButton.Create(Self, 280, 2, 40, 20, 'Edit');
+  FEditButton.OnClick := @EditButtonClickEvent;
+  FDelButton := TACustomButton.Create(Self, 280, 44, 40, 20, 'Del');
+
+  FListBox := TListBox.Create(Self);
+  with FListBox do begin
+    Width := 152;
+    Height := 255;
+    Left := 2;
+    Top := 20;
+    Parent := TWinControl(Self);
+    OnMouseDown := @ListBoxMouseDownEvent;
+  end;
 end;
 
 procedure TFigureHistoryManager.LoadHistory;
 var
   i: integer;
-  Text_: string;
 begin
-  //FListBox.Items.Clear;
-  //for i := 0 to ToolsDataUtils.GetPosition do begin
-  //  Text_ := IntToStr(i) + '. ' +
-  //    ClassRef[ToolsDataUtils.GetData(i).NofTool].NameOfTool;
-  //  FlistBox.Items.Add(Text_);
-  //end;
+  FListBox.Items.Clear;
+  for i := 0 to History.DataLength - 1 do
+    FlistBox.Items.Add(History.GetFigure(i).Name);
 end;
 
-procedure TFigureHistoryManager.OnMouseDownEvent(Sender: TObject;
+procedure TFigureHistoryManager.ListBoxMouseDownEvent(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 begin
-  //if Button = mbLeft then begin
-  //  X := Zoom.PreviousX;
-  //  Y := Zoom.PreviousY;
-  //  Zoom.CoordAllignment(X, NULL, Y, NULL);
-  //  ToolsDataUtils.ShowHistory(X, Y);
-  //  ToolsDataUtils.HighLightFigure(FListBox.ItemIndex);
-  //end;
-  //if Button = mbRight then begin
-  //  ToolsDataUtils.Delete(FListBox.ItemIndex);
-  //  LoadHistory;
-  //end;
+  if FListBox.ItemIndex <> -1 then
+    History.GetFigure(FListBox.ItemIndex).HighLight;
 end;
 
-constructor TFigureListBox.Create(Parent_: TComponent);
+procedure TFigureHistoryManager.EditButtonClickEvent(Sender: TObject);
 begin
-  inherited Create(Parent_);
-  with Self do begin
-    Parent := twincontrol(Parent_);
-    Width := 85;
-    Height := twincontrol(Parent_).Height - 35 - 1 - 5;
-    Left := twincontrol(Parent_).Width - 60 - 15 - 35 + 5;
-    Top := 0 + 5;
+  if FListBox.ItemIndex <> -1 then begin
+    FEditPanel.Free;
+    FEditPanel := TEditPanel.Create(Self.Parent);
+    FEditPanel.LoadFigure(History.GetFigure(FListBox.ItemIndex));
   end;
+end;
+
+procedure TFigureHistoryManager.DelButtonClickEvent(Sender: TObject);
+begin
+
 end;
 
 end.

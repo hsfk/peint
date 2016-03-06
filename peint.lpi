@@ -33,7 +33,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="14">
       <Unit0>
         <Filename Value="peint.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -74,9 +74,8 @@
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="uzoom.pas"/>
+        <Filename Value="UZoom.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UZoom"/>
       </Unit9>
       <Unit10>
         <Filename Value="UPointUtils.pas"/>
@@ -86,6 +85,15 @@
         <Filename Value="UTools.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="UMainSceneUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="ueditpanel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UEditPanel"/>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

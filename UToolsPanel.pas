@@ -6,57 +6,39 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, ExtCtrls,
-  StdCtrls, UTools, Graphics, Buttons;
+  StdCtrls, UTools, Graphics, Buttons, UCustomControls, UObjectMove;
 
 type
-  OnClickEvent = procedure(Sender: TObject) of object;
-
-  TToolsPanel = class(TPanel)
+  TToolsPanel = class(TACustomPanel)
   public
-    constructor Create(Parent_: TComponent; List: TImageList; Scene: TCanvas);
+    constructor Create(Scene: TCanvas; AParent: TComponent; ImageList: TImageList);
   private
     FScene: TCanvas;
-    ToolsIcons: TImageList;
-    procedure AddButton(Parent_: TComponent; tool_index: integer;
-      ClickEvent: OnClickEvent);
+    FToolsIcons: TImageList;
     procedure ToolClickEvent(Sender: TObject);
   end;
 
 implementation
 
-constructor TToolsPanel.Create(Parent_: TComponent; List: TImageList; Scene: TCanvas);
+constructor TToolsPanel.Create(Scene: TCanvas; AParent: TComponent;
+  ImageList: TImageList);
 var
   i: integer;
+  ToolButton: TACustomSpeedButton;
 begin
   FScene := Scene;
-  ToolsIcons := List;
-  inherited Create(Parent_);
-  with Self do begin
-    Parent := TWinControl(Parent_);
-    Width := 5 + 40 + 5;
-    Height := 20 + 40 * Length(Tools) + 5;
-    BevelInner := bvRaised;
-    BevelOuter := bvLowered;
-  end;
-  for i := 0 to High(Tools) do
-    AddButton(self, i, @ToolClickEvent);
-end;
-
-procedure TToolsPanel.AddButton(Parent_: TComponent; tool_index: integer;
-  ClickEvent: OnClickEvent);
-var
-  Button: TSpeedButton;
-begin
-  Button := TSpeedButton.Create(Parent_);
-  with Button do begin
-    Parent := TWinControl(Parent_);
-    Width := 40;
-    Height := 40;
-    ToolsIcons.GetBitmap(tool_index, glyph);
-    Top := 20 + tool_index * 40;
-    Left := 5;
-    Tag := tool_index;
-    OnClick := ClickEvent;
+  FToolsIcons := ImageList;
+  inherited Create(AParent, 0, 0, 50, 25 + 40 * Length(Tools));
+  Self.OnMouseDown := @PanelMove.OnMouseDown;
+  Self.OnMouseMove := @PanelMove.OnMouseMove;
+  Self.OnMouseUp := @PanelMove.OnMouseUp;
+  Self.BevelInner := bvRaised;
+  Self.BevelOuter := bvLowered;
+  for i := 0 to High(Tools) do begin
+    ToolButton := TACustomSpeedButton.Create(Self, 20 + 40 * i, 5, 40, 40, '');
+    FToolsIcons.GetBitmap(i, ToolButton.Glyph);
+    ToolButton.Tag := i;
+    ToolButton.OnClick := @ToolClickEvent;
   end;
 end;
 
