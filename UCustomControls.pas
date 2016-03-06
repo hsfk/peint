@@ -16,6 +16,12 @@ type
     constructor Create(AParent: TComponent; ATop, ALeft, AWidth, AHeight: integer);
   end;
 
+  TACustomLabel = class(TLabel)
+  public
+    constructor Create(AParent: TComponent; ATop, ALeft, AWidth, AHeight: integer;
+      ACaption: string);
+  end;
+
   TACustomButton = class(TButton)
   public
     constructor Create(AParent: TComponent; ATop, ALeft, AWidth, AHeight: integer;
@@ -73,6 +79,14 @@ begin
   DefaultInit(Self, AParent, ATop, ALeft, AWidth, AHeight);
 end;
 
+constructor TACustomLabel.Create(AParent: TComponent;
+  ATop, ALeft, AWidth, AHeight: integer; ACaption: string);
+begin
+  inherited Create(AParent);
+  DefaultInit(Self, AParent, ATop, ALeft, AWidth, AHeight);
+  Self.Caption := ACaption;
+end;
+
 constructor TACustomButton.Create(AParent: TComponent;
   ATop, ALeft, AWidth, AHeight: integer; ACaption: string);
 begin
@@ -121,8 +135,7 @@ begin
 end;
 
 constructor TACustomSBar.Create(AParent: TComponent;
-  ATop, ALeft, AWidth, AHeight, AMin, AMax, APageSize: integer;
-  AVisible: boolean);
+  ATop, ALeft, AWidth, AHeight, AMin, AMax, APageSize: integer; AVisible: boolean);
 begin
   inherited Create(AParent);
   DefaultInit(Self, AParent, ATop, ALeft, AWidth, AHeight);

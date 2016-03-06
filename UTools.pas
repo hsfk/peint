@@ -40,6 +40,7 @@ type
 
   TPolyLineTool = class(TPaintingTool)
     constructor Create(Scene: TCanvas); override;
+    procedure Start(Point: TPoint; MButton: TMouseButton); override;
     procedure Continue(Point: TPoint; Shift: TShiftState); override;
   end;
 
@@ -96,15 +97,13 @@ end;
 
 procedure TPaintingTool.Start(Point: TPoint; MButton: TMouseButton);
 begin
-  Point := Zoom.ToGlobal(Point);
-  Figure.Add(Point);
+  Figure.Add(Zoom.ToGlobal(Point));
   History.Insert(Figure);
 end;
 
 procedure TPaintingTool.Continue(Point: TPoint; Shift: TShiftState);
 begin
-  Point := Zoom.ToGlobal(Point);
-  Figure.Add(Point);
+  Figure.Add(Zoom.ToGlobal(Point));
   History.ReplaceLast(Figure);
 end;
 
@@ -118,6 +117,13 @@ constructor TPolyLineTool.Create(Scene: TCanvas);
 begin
   inherited Create(Scene);
   Figure := TPolyLine.Create(Scene, 'Poly line');
+  History.Insert(Figure);
+end;
+
+procedure TPolyLineTool.Start(Point: TPoint; MButton: TMouseButton);
+begin
+  Figure.Add(Zoom.ToGlobal(Point));
+  History.ReplaceLast(Figure);
 end;
 
 procedure TPolyLineTool.Continue(Point: TPoint; Shift: TShiftState);
@@ -163,21 +169,22 @@ begin
   Zoom.SetPrevScreenLocation(PreviousScreenLocation + Offset);
 end;
 
-procedure InitTool(Tool: ToolClass; IsRecreatingRequired: boolean);
+procedure InitTool(Tool: ToolClass; IsRecreatingRequired: boolean; Name: string);
 begin
   SetLength(Tools, Length(Tools) + 1);
   Tools[High(Tools)].Tool := Tool;
   Tools[High(Tools)].Recreate := IsRecreatingRequired;
+  Tools[High(Tools)].Name := Name;
 end;
 
 initialization
 
-  InitTool(TPenTool, True);
-  InitTool(TPolyLineTool, False);
-  InitTool(TLineTool, True);
-  InitTool(TRectangleTool, True);
-  InitTool(TEllipseTool, True);
-  InitTool(TZoomTool, True);
-  InitTool(THandTool, True);
+  InitTool(TPenTool, True,'Pen');
+  InitTool(TPolyLineTool, False,'Poly line');
+  InitTool(TLineTool, True,'Line');
+  InitTool(TRectangleTool, True,'Rectangle');
+  InitTool(TEllipseTool, True,'Ellipse');
+  InitTool(TZoomTool, True,'Zoom');
+  InitTool(THandTool, True,'Hand');
 
 end.

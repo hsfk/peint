@@ -15,6 +15,8 @@ type
     constructor Create(AParent: TComponent);
     procedure Invalidate;
   private
+    FWidth: integer;
+    FHeight: integer;
     FHBar: TACustomSBar;
     FVBar: TACustomSBar;
     procedure OnScrollEvent(Sender: TObject; ScrollCode: TScrollCode;
@@ -24,17 +26,14 @@ type
 implementation
 
 constructor TZoomScrollBar.Create(AParent: TComponent);
-var
-  AWidth: integer;
-  AHeight: integer;
 begin
-  AWidth := twincontrol(AParent).Width;
-  AHeight := twincontrol(AParent).Height;
-  FHBar := TACustomSBar.Create(AParent, AHeight - 36, 1, AWidth -
-    2, 15, 0, AWidth, AWidth, True);
+  FWidth := TWinControl(AParent).Width;
+  FHeight := TWinControl(AParent).Height;
+  FHBar := TACustomSBar.Create(AParent, FHeight - 36, 1, FWidth -
+    2, 15, 0, FWidth, FWidth, True);
   FHBar.OnScroll := @OnScrollEvent;
-  FVBar := TACustomSBar.Create(AParent, 0, AWidth - 16, AHeight -
-    35, 15, 0, AHeight, AHeight, True);
+  FVBar := TACustomSBar.Create(AParent, 0, FWidth - 16, FHeight -
+    35, 15, 0, FHeight, FHeight, True);
   FVBar.Kind := sbVertical;
   FVBar.OnScroll := @OnScrollEvent;
 end;
@@ -52,11 +51,6 @@ procedure TZoomScrollBar.OnScrollEvent(Sender: TObject; ScrollCode: TScrollCode;
 begin
   Zoom.SetPrevScreenLocation(ToPoint(FHBar.Position, FVBar.Position));
   History.Show;
-  //with Zoom do begin
-  //  PreviousX := FHBar.position;
-  //  PreviousY := FVBar.position;
-  //  ToolsDataUtils.ShowHistory(PreviousX, PreviousY);
-  //end;
 end;
 
 end.

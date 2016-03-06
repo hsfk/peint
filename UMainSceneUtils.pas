@@ -10,7 +10,7 @@ uses
 type
   TMainSceneUtils = class
   public
-    constructor Create(Scene : TCanvas);
+    constructor Create(Scene: TCanvas);
     procedure ClearScene;
     procedure SaveToolState;
     procedure LoadToolState;
@@ -23,10 +23,12 @@ type
     FPrevBStyle: TBrushStyle;
   end;
 
-  var MainSceneUtils : TMainSceneUtils;
+var
+  MainSceneUtils: TMainSceneUtils;
+
 implementation
 
-constructor TMainSceneUtils.Create(Scene : TCanvas);
+constructor TMainSceneUtils.Create(Scene: TCanvas);
 begin
   FScene := Scene;
 end;
@@ -58,4 +60,3 @@ begin
 end;
 
 end.
-

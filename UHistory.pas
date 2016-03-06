@@ -114,8 +114,6 @@ var
   tmp: Nodeptr;
 begin
   tmp := FTail^.Prev;
-  if tmp = FHead then
-    exit;
   tmp := CopyNode(tmp);
   PushBack(tmp);
 end;

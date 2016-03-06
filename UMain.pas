@@ -23,7 +23,6 @@ type
     ToolsIconList: TImageList;
     MainMenu: TMainMenu;
     EditMenu: TMainMenu;
-
     Undo: TMenuItem;
     Redo: TMenuItem;
     SaveAs: TMenuItem;
@@ -46,17 +45,13 @@ type
     procedure CloseProgramClick(Sender: TObject);
     procedure OpenAsClick(Sender: TObject);
   private
-    { private declarations }
-  public
-    { public declarations }
+
   end;
 
 var
   MainForm: TMainForm;
   IsDrawing: boolean;
   isMoving: boolean;
-
-  Palette: TPalette;
   ToolsPanel: TToolsPanel;
   ScrollBar: TZoomScrollBar;
   FigureManager: TFigureHistoryManager;
@@ -72,7 +67,7 @@ begin
   MainForm.Constraints.MaxWidth := MainForm.Width;
   MainForm.Constraints.MinWidth := MainForm.Width;
 
-  PanelMove := TObjectMove.Create(MainForm.Width - 15, MainForm.Height - 15);
+  PanelMove := TObjectMove.Create(MainForm.Width - 15, MainForm.Height - 35);
   ScrollBar := TZoomScrollBar.Create(self);
   History := THistory.Create(FMainScene.Canvas);
   Zoom := TZoom.Create(self);
@@ -140,10 +135,11 @@ procedure TMainForm.SaveAsClick(Sender: TObject);
 var
   SavePictureDialog: TSavePictureDialog;
 begin
-  //SavePictureDialog := TSavePictureDialog.Create(self);
-  //SavePictureDialog.Filter := 'Bitmap Picture|*.bmp';
-  //if SavePictureDialog.Execute then
-  //  FCanvas.SaveToFile(SavePictureDialog.filename);
+  SavePictureDialog := TSavePictureDialog.Create(self);
+  SavePictureDialog.Filter := 'Bitmap Picture|*.bmp';
+  if SavePictureDialog.Execute then begin
+   // MainSceneUtils.ToBmp(FMainScene.Canvas).SaveToFile(SavePictureDialog.filename);
+  end;
 end;
 
 procedure TMainForm.CloseProgramClick(Sender: TObject);
@@ -155,11 +151,11 @@ procedure TMainForm.OpenAsClick(Sender: TObject);
 var
   OpenPictureDialog: TOpenPictureDialog;
 begin
-  //OpenPictureDialog := TOpenPictureDialog.Create(Self);
-  //OpenPictureDialog.Filter := 'Bitmap Picture|*.bmp';
+  OpenPictureDialog := TOpenPictureDialog.Create(Self);
+  OpenPictureDialog.Filter := 'Bitmap Picture|*.bmp';
   //if OpenPictureDialog.Execute then
   //  FCanvas.LoadFromFile(OpenPictureDialog.FileName);
-  //FMainScene.Invalidate;
+  FMainScene.Invalidate;
 end;
 
 procedure TMainForm.ExportClick(Sender: TObject);

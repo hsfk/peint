@@ -20,8 +20,8 @@ function ToPoint(X, Y: integer): TPoint; inline;
 function null: TPoint;
 function min: TPoint;
 function max: TPoint;
-procedure SaveMin(var a: TPoint; b: TPoint); //inline;
-procedure SaveMax(var a: TPoint; b: TPoint);// inline;
+procedure SaveMin(var a: TPoint; b: TPoint); inline;
+procedure SaveMax(var a: TPoint; b: TPoint); inline;
 
 implementation
 
@@ -85,7 +85,7 @@ begin
   Result.y := 99999;
 end;
 
-procedure SaveMin(var a: TPoint; b: TPoint);// inline;
+procedure SaveMin(var a: TPoint; b: TPoint); inline;
 begin
   if b.x < a.x then
     a.x := b.x;
@@ -93,7 +93,7 @@ begin
     a.y := b.y;
 end;
 
-procedure SaveMax(var a: TPoint; b: TPoint);// inline;
+procedure SaveMax(var a: TPoint; b: TPoint); inline;
 begin
   if b.x > a.x then
     a.x := b.x;

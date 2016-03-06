@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, ExtCtrls,
-  StdCtrls, Dialogs, UCustomControls,UObjectMove;
+  StdCtrls, Dialogs, UCustomControls, UObjectMove, UTools;
 
 type
   BrushStyleCbox = record
@@ -62,7 +62,9 @@ type
   public
     constructor Create(Scene: TCanvas; AParent: TComponent; ATop, ALeft: integer);
     procedure LoadToolState;
+    procedure CurrentToolInvalidate;
   private
+    FCurrentTool: TLabel;
     FScene: TCanvas;
     FPaletteCBox: TPaletteCBox;
     FPaletteShape: TPaletteShape;
@@ -71,6 +73,9 @@ type
     FExtButton: TCustomButton;
     procedure ExtButtonClickEvent(Sender: TObject);
   end;
+
+var
+  Palette: TPalette;
 
 implementation
 
@@ -84,6 +89,7 @@ begin
   Self.OnMouseUp := @PanelMove.OnMouseUp;
   Self.BevelInner := bvRaised;
   Self.BevelOuter := bvLowered;
+  FCurrentTool := TACustomLabel.Create(Self, 69, 5, 30, 15, 'Pen');
   FExtButton := TACustomButton.Create(Self, 69, 120, 30, 15, '▲');
   FExtButton.OnClick := @ExtButtonClickEvent;
   FPaletteShape := TPaletteShape.Create(FScene, Self);
@@ -98,6 +104,11 @@ begin
   //  FScene.Pen.Style:=FPaletteShape.Ge;
   FScene.Brush.Color := FPaletteShape.GetBrushColor;
   FScene.Brush.Style := FPaletteCBox.GetBrushStyle;
+end;
+
+procedure TPalette.CurrentToolInvalidate;
+begin
+  FCurrentTool.Caption := Tools[CurrentToolIndex].Name;
 end;
 
 procedure TPalette.ExtButtonClickEvent(Sender: TObject);

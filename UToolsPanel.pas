@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, ExtCtrls,
-  StdCtrls, UTools, Graphics, Buttons, UCustomControls, UObjectMove;
+  StdCtrls, UTools, Graphics, Buttons, UCustomControls, UObjectMove,UPalette;
 
 type
   TToolsPanel = class(TACustomPanel)
@@ -46,6 +46,7 @@ procedure TToolsPanel.ToolClickEvent(Sender: TObject);
 begin
   CurrentToolIndex := TButton(Sender).tag;
   Tool := Tools[CurrentToolIndex].Tool.Create(FScene);
+  Palette.CurrentToolInvalidate;
 end;
 
 end.

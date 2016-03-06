@@ -95,7 +95,6 @@ begin
   ATmpPoint := Figure.FMinPoint;
   BTmpPoint := Figure.FMaxPoint;
   Result := Figure.Create(FScene, Figure.Name);
- // Result.FPoints := Copy(Figure.FPoints, 0, Length(Figure.FPoints));
   Result.FMinPoint := ATmpPoint;
   Result.FMaxPoint := BTmpPoint;
   Result.PenWidth := Figure.FPenWidth;
