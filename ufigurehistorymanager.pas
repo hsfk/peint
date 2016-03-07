@@ -106,6 +106,7 @@ procedure TFigureHistoryManager.FUpButtonClickEvent(Sender: TObject);
 begin
   if (FListBox.ItemIndex <> -1) and (FListBox.ItemIndex > 0) then begin
     History.MoveUp(FListBox.ItemIndex);
+    FListBox.Items.Move(FListBox.ItemIndex, FListBox.ItemIndex - 1);
     FListBox.ItemIndex := FListBox.ItemIndex - 1;
     History.Show;
   end;
@@ -116,6 +117,7 @@ begin
   if (FListBox.ItemIndex <> -1) and (FListBox.ItemIndex < FListBox.Items.Count - 1) then
   begin
     History.MoveDown(FListBox.ItemIndex);
+    FListBox.Items.Move(FListBox.ItemIndex, FListBox.ItemIndex + 1);
     FListBox.ItemIndex := FListBox.ItemIndex + 1;
     History.Show;
   end;
