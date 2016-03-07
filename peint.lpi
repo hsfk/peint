@@ -33,7 +33,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="peint.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -90,10 +90,14 @@
         <IsPartOfProject Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="ueditpanel.pas"/>
+        <Filename Value="UEditPanel.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UEditPanel"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="ucustompalettecontrols.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UCustomPaletteControls"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

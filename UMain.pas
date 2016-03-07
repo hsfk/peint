@@ -44,8 +44,6 @@ type
     procedure SaveAsClick(Sender: TObject);
     procedure CloseProgramClick(Sender: TObject);
     procedure OpenAsClick(Sender: TObject);
-  private
-
   end;
 
 var

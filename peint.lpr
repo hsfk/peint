@@ -9,7 +9,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, UMain, UPalette, UObjectMove, utoolspanel, UScrollBar,
   UFigureHistoryManager, UFigure, UHistory, UZoom, UPointUtils, UTools,
-UMainSceneUtils, UEditPanel;
+UMainSceneUtils, UEditPanel, UCustomPaletteControls;
 
 {$R *.res}
 

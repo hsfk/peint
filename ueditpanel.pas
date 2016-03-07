@@ -5,29 +5,22 @@ unit UEditPanel;
 interface
 
 uses
-  Classes, SysUtils, UCustomControls, UFigure, UPalette, Graphics, Controls,
-  UObjectMove, StdCtrls, Dialogs, ExtCtrls, UHistory;
+  Classes, SysUtils, UCustomControls, UFigure, Graphics, Controls,
+  UObjectMove, StdCtrls, Dialogs, ExtCtrls, UHistory, UCustomPaletteControls;
 
 type
-  TEditPanel = class
+  TFigureEdit = class
   public
-    constructor Create(AParent: TComponent);
+    constructor Create(AParent: TComponent; ATop, ALeft: integer);
     procedure LoadFigure(Figure: TFigure);
   private
-    FParent : TComponent;
-    BrushStyles: array of BrushStyleCbox;
-    FPenShape: TACustomShape;
-    FBrushShape: TACustomShape;
+    FParent: TComponent;
     FFigure: TFigure;
-    FIncButton: TACustomButton;
-    FDecButton: TACustomButton;
-    FPenWidthEdit: TACustomEdit;
-    FStyleCBox: TACustomCBox;
-    procedure InitStyle(AName: string; AStyle: TBrushStyle);
+    FToolShapes: TToolShapes;
+    FPWidthEdit: TWidthEdit;
+    FBStylesCbox: TBrushStylesCBox;
     procedure OnSelectEvent(Sender: TObject);
-    procedure ButtonClickEvent(Sender: TObject);
-    procedure OnChangeEvent(Sender: TObject);
-    procedure EditingDoneEvent(Sender: TObject);
+    procedure PWidthEditChangeEvent(Sender: TObject);
     procedure PenShapeMouseDownEvent(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure BrushShapeMouseDownEvent(Sender: TObject; Button: TMouseButton;
@@ -36,93 +29,39 @@ type
 
 implementation
 
-
-constructor TEditPanel.Create(AParent: TComponent);
-var
-  i: integer;
+constructor TFigureEdit.Create(AParent: TComponent; ATop, ALeft: integer);
 begin
   FParent := AParent;
-  InitStyle('Horizontal', bsHorizontal);
-  InitStyle('Solid', bsSolid);
-  InitStyle('Clear', bsClear);
-  InitStyle('Vertical', bsVertical);
-  InitStyle('FDiagonal', bsFdiagonal);
-  InitStyle('BDiagonal', bsBDiagonal);
-  InitStyle('Cross', bsCross);
-  InitStyle('Diagonal Cross', bsDiagCross);
-  FStyleCBox := TACustomCBox.Create(AParent, 280, 5, 100, 15, True);
-  for i := 0 to high(BrushStyles) do
-    FStyleCBox.Items.Add(BrushStyles[i].Name);
-
-  FStyleCBox.ItemIndex := 2;
-  FStyleCbox.OnSelect := @OnSelectEvent;
-  FPenShape := TACustomShape.Create(AParent, 280, 5 + 102, 30, 30, clBlack,
-    psSolid, clBlack, bsSolid);
-  FPenShape.OnMouseDown := @PenShapeMouseDownEvent;
-  FBrushShape := TACustomShape.Create(AParent, 295, 20 + 102, 30, 30,
-    clBlack, psSolid, clWhite, bsSolid);
-  FBrushShape.OnMouseDown := @BrushShapeMouseDownEvent;
-
-  FPenWidthEdit := TACustomEdit.Create(AParent, 310, 5, 30, 15, '1', True, taRightJustify);
-  FPenWidthEdit.OnChange := @OnChangeEvent;
-  FPenWidthEdit.OnEditingDone := @EditingDoneEvent;
-  FIncButton := TACustomButton.Create(AParent, 310, 35, 15, 23, '+');
-  FIncButton.Tag := 1;
-  FIncButton.OnClick := @ButtonClickEvent;
-  FDecButton := TACustomButton.Create(AParent, 310, 49, 15, 23, '-');
-  FDecButton.Tag := -1;
-  FDecButton.OnClick := @ButtonClickEvent;
+  FToolShapes := TToolShapes.Create(AParent, ATop, ALeft + 102);
+  FToolShapes.FPenShape.OnMouseDown := @PenShapeMouseDownEvent;
+  FToolShapes.FBrushShape.OnMouseDown := @BrushShapeMouseDownEvent;
+  FBStylesCbox := TBrushStylesCBox.Create(AParent, ATop, ALeft);
+  FBStylesCbox.OnSelect := @OnSelectEvent;
+  FPWidthEdit := TWidthEdit.Create(AParent, ATop + 30, ALeft + 15);
+  FPWidthEdit.OnChange := @PWidthEditChangeEvent;
 end;
 
-procedure TEditPanel.LoadFigure(Figure: TFigure);
-var
-  i: integer;
+procedure TFigureEdit.LoadFigure(Figure: TFigure);
 begin
   FFigure := Figure;
-  FPenWidthEdit.Text := IntToStr(FFigure.PenWidth);
-  FPenShape.Brush.Color := FFigure.PenColor;
-  FBrushShape.Brush.Color := FFigure.BrushColor;
-  for i := 0 to Length(BrushStyles) - 1 do
-    if FFigure.BrushStyle = BrushStyles[i].Style then
-      FStyleCBox.ItemIndex := i;
+  FPWidthEdit.Width := FFigure.PenWidth;
+  FToolShapes.PenColor := FFigure.PenColor;
+  FToolShapes.BrushColor := FFigure.BrushColor;
 end;
 
-procedure TEditPanel.InitStyle(AName: string; AStyle: TBrushStyle);
+procedure TFigureEdit.OnSelectEvent(Sender: TObject);
 begin
-  SetLength(BrushStyles, length(BrushStyles) + 1);
-  with BrushStyles[high(BrushStyles)] do begin
-    Name := AName;
-    Style := AStyle;
-  end;
-end;
-
-procedure TEditPanel.OnSelectEvent(Sender: TObject);
-begin
-  FFigure.BrushStyle := BrushStyles[FStyleCBox.ItemIndex].Style;
+  FFigure.BrushStyle := FBStylesCbox.Style;
   History.Show;
 end;
 
-procedure TEditPanel.ButtonClickEvent(Sender: TObject);
+procedure TFigureEdit.PWidthEditChangeEvent(Sender: TObject);
 begin
-  FPenWidthEdit.Text := IntToStr(StrToInt(FPenWidthEdit.Text) + TButton(Sender).Tag);
-  EditingDoneEvent(FPenWidthEdit);
-end;
-
-procedure TEditPanel.OnChangeEvent(Sender: TObject);
-begin
-  if (FPenWidthEdit.Text = '') or (StrToInt(FPenWidthEdit.Text) < 1) then
-    FPenWidthEdit.Text := '1';
-  if StrToInt(FPenWidthEdit.Text) > 99 then
-    FPenWidthEdit.Text := '99';
-end;
-
-procedure TEditPanel.EditingDoneEvent(Sender: TObject);
-begin
-  FFigure.PenWidth := StrToInt(FPenWidthEdit.Text);
+  FFigure.PenWidth := FPWidthEdit.Width;
   History.Show;
 end;
 
-procedure TEditPanel.PenShapeMouseDownEvent(Sender: TObject;
+procedure TFigureEdit.PenShapeMouseDownEvent(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   ColorDialog: TColorDialog;
@@ -135,7 +74,7 @@ begin
   History.Show;
 end;
 
-procedure TEditPanel.BrushShapeMouseDownEvent(Sender: TObject;
+procedure TFigureEdit.BrushShapeMouseDownEvent(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   ColorDialog: TColorDialog;
@@ -145,7 +84,7 @@ begin
   if ColorDialog.Execute then begin
     TShape(Sender).Brush.Color := ColorDialog.Color;
     PrevStyle := FFigure.BrushStyle;
-    FFigure.BrushColor := Tshape(Sender).Brush.Color;
+    FFigure.BrushColor := TShape(Sender).Brush.Color;
     FFigure.BrushStyle := PrevStyle;
   end;
   History.Show;

@@ -11,6 +11,8 @@ type
   TMainSceneUtils = class
   public
     constructor Create(Scene: TCanvas);
+    procedure SetToolState(PWidth: integer; PColor: TColor; PStyle: TPenStyle;
+      BColor: TColor; BStyle: TBrushStyle);
     procedure ClearScene;
     procedure SaveToolState;
     procedure LoadToolState;
@@ -33,12 +35,22 @@ begin
   FScene := Scene;
 end;
 
+procedure TMainSceneUtils.SetToolState(PWidth: integer; PColor: TColor;
+  PStyle: TPenStyle; BColor: TColor; BStyle: TBrushStyle);
+begin
+  FScene.Pen.Width := PWidth;
+  FScene.Pen.Color := PColor;
+  FScene.Pen.Style := PStyle;
+  FScene.Brush.Color := BColor;
+  FScene.Brush.Style := BStyle;
+end;
+
 procedure TMainSceneUtils.ClearScene;
 begin
-  FScene.Pen.Color := clWhite;
-  FScene.Brush.Color := clWhite;
-  FScene.Brush.Style := bsSolid;
+  SaveToolState;
+  SetToolState(1, clWhite,psSolid,clWhite,bsSolid);
   FScene.Rectangle(0, 0, FScene.Width, FScene.Height);
+  LoadToolState;
 end;
 
 procedure TMainSceneUtils.SaveToolState;

@@ -16,6 +16,8 @@ type
     procedure HighLight;
     procedure Add(Point: TPoint); virtual; abstract;
     function CopyFigure(Figure: TFigure): TFigure;
+    function GetMaxPoint: TPoint;
+    function GetMinPoint: TPoint;
   private
     FName: string;
     FScene: TCanvas;
@@ -77,20 +79,19 @@ end;
 procedure TFigure.HighLight;
 begin
   MainSceneUtils.SaveToolState;
-  FScene.Pen.Color := clRed;
-  FScene.Pen.Width := 2;
-  FScene.Brush.Style := bsClear;
+  MainSceneUtils.SetToolState(2, clRed, psSolid, clWhite, bsClear);
   FScene.Rectangle(
-    Zoom.ToScene(FMinPoint - 3).x,
-    Zoom.ToScene(FMinPoint - 3).y,
-    Zoom.ToScene(FMaxPoint + 3).x,
-    Zoom.ToScene(FMaxPoint + 3).y);
+    Zoom.ToScene(FMinPoint - PenWidth div 2).x,
+    Zoom.ToScene(FMinPoint - PenWidth div 2).y,
+    Zoom.ToScene(FMaxPoint + PenWidth div 2).x,
+    Zoom.ToScene(FMaxPoint + PenWidth div 2).y);
   MainSceneUtils.LoadToolState;
 end;
 
 function TFigure.CopyFigure(Figure: TFigure): TFigure;
-var ATmpPoint : TPoint;
-    BTmpPoint : TPoint;
+var
+  ATmpPoint: TPoint;
+  BTmpPoint: TPoint;
 begin
   ATmpPoint := Figure.FMinPoint;
   BTmpPoint := Figure.FMaxPoint;
@@ -104,6 +105,16 @@ begin
   Result.BrushColor := Figure.FBrushColor;
 end;
 
+function TFigure.GetMinPoint: TPoint;
+begin
+  Result := FMinPoint;
+end;
+
+function TFigure.GetMaxPoint: TPoint;
+begin
+  Result := FMaxPoint;
+end;
+
 procedure TFigure.SaveToolState;
 begin
   FPenWidth := FScene.Pen.Width;
@@ -115,11 +126,7 @@ end;
 
 procedure TFigure.LoadToolState;
 begin
-  FScene.Pen.Width := FPenWidth;
-  FScene.Pen.Color := FPenColor;
-  FScene.Pen.Style := FPenStyle;
-  FScene.Brush.Color := FBrushColor;
-  FScene.Brush.Style := FBrushStyle;
+  MainSceneUtils.SetToolState(FPenWidth, FPenColor, FPenStyle, FBrushColor, FBrushStyle);
 end;
 
 procedure TTwoPointFigure.Add(Point: TPoint);
@@ -142,8 +149,7 @@ end;
 
 procedure TPolyLine.Add(Point: TPoint);
 begin
-  if Length(FPoints) = 0 then
-    SaveToolState;
+  SaveToolState;
   SetLength(FPoints, Length(FPoints) + 1);
   FPoints[High(FPoints)] := Point;
   SaveMin(FMinPoint, Point);

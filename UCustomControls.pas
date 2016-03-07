@@ -7,9 +7,6 @@ interface
 uses
   Classes, SysUtils, StdCtrls, ExtCtrls, Graphics, Buttons, Controls;
 
-procedure DefaultInit(AComponent, AParent: TComponent;
-  ATop, ALeft, AWidth, AHeight: integer);
-
 type
   TACustomPanel = class(TPanel)
   public

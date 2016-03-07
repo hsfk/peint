@@ -4,11 +4,11 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="73">
+    <Units Count="65">
       <Unit0>
         <Filename Value="peint.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="97" Y="10"/>
+        <CursorPos X="52" Y="12"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -19,8 +19,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="117"/>
-        <CursorPos X="56" Y="138"/>
+        <TopLine Value="35"/>
+        <CursorPos X="44" Y="46"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -28,60 +28,61 @@
       <Unit2>
         <Filename Value="UPalette.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
-        <TopLine Value="260"/>
-        <CursorPos X="30" Y="137"/>
-        <UsageCount Value="165"/>
+        <EditorIndex Value="14"/>
+        <CursorPos X="54" Y="35"/>
+        <UsageCount Value="177"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="UObjectMove.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <CursorPos X="70" Y="15"/>
-        <UsageCount Value="162"/>
+        <UsageCount Value="174"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="UToolsPanel.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="14"/>
-        <CursorPos X="40" Y="21"/>
-        <UsageCount Value="160"/>
+        <EditorIndex Value="15"/>
+        <CursorPos X="77" Y="9"/>
+        <UsageCount Value="172"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="UScrollBar.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="12"/>
         <TopLine Value="4"/>
         <CursorPos X="50" Y="45"/>
-        <UsageCount Value="107"/>
+        <UsageCount Value="119"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="UFigureHistoryManager.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="9"/>
-        <TopLine Value="12"/>
-        <CursorPos X="32" Y="33"/>
-        <UsageCount Value="103"/>
+        <TopLine Value="14"/>
+        <CursorPos X="65" Y="23"/>
+        <UsageCount Value="115"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="UFigure.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <CursorPos X="48" Y="97"/>
-        <UsageCount Value="75"/>
+        <TopLine Value="61"/>
+        <CursorPos X="65" Y="90"/>
+        <UsageCount Value="87"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="UHistory.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
-        <CursorPos X="22" Y="116"/>
-        <UsageCount Value="71"/>
+        <TopLine Value="5"/>
+        <CursorPos X="15" Y="21"/>
+        <UsageCount Value="83"/>
         <Loaded Value="True"/>
       </Unit8>
       <Unit9>
@@ -90,129 +91,126 @@
         <EditorIndex Value="2"/>
         <TopLine Value="20"/>
         <CursorPos X="35" Y="23"/>
-        <UsageCount Value="96"/>
+        <UsageCount Value="108"/>
         <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="UPointUtils.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="6"/>
-        <CursorPos X="60" Y="16"/>
-        <UsageCount Value="60"/>
+        <CursorPos X="63" Y="27"/>
+        <UsageCount Value="72"/>
         <Loaded Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="UTools.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="137"/>
-        <CursorPos X="52" Y="146"/>
+        <TopLine Value="161"/>
+        <CursorPos X="64" Y="185"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="UMainSceneUtils.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <UsageCount Value="36"/>
+        <TopLine Value="11"/>
+        <CursorPos X="17" Y="53"/>
+        <UsageCount Value="48"/>
         <Loaded Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="ueditpanel.pas"/>
+        <Filename Value="UEditPanel.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UEditPanel"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
-        <TopLine Value="102"/>
-        <CursorPos X="58" Y="116"/>
-        <UsageCount Value="25"/>
+        <TopLine Value="41"/>
+        <CursorPos X="34" Y="90"/>
+        <UsageCount Value="37"/>
         <Loaded Value="True"/>
       </Unit13>
       <Unit14>
+        <Filename Value="ucustompalettecontrols.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UCustomPaletteControls"/>
+        <EditorIndex Value="11"/>
+        <TopLine Value="57"/>
+        <CursorPos X="23" Y="82"/>
+        <UsageCount Value="31"/>
+        <Loaded Value="True"/>
+      </Unit14>
+      <Unit15>
         <Filename Value="ustdctrlsutils.pas"/>
         <UnitName Value="UStdCtrlsUtils"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="25"/>
-      </Unit14>
-      <Unit15>
+        <UsageCount Value="24"/>
+      </Unit15>
+      <Unit16>
         <Filename Value="utoolstest.pas"/>
         <UnitName Value="UToolsTest"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="132"/>
         <CursorPos X="41" Y="142"/>
-        <UsageCount Value="42"/>
-      </Unit15>
-      <Unit16>
+        <UsageCount Value="41"/>
+      </Unit16>
+      <Unit17>
         <Filename Value="UToolsManager.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="20" Y="14"/>
-        <UsageCount Value="80"/>
-      </Unit16>
-      <Unit17>
+        <UsageCount Value="79"/>
+      </Unit17>
+      <Unit18>
         <Filename Value="uexporttosvp.pas"/>
         <UnitName Value="UExportToSVP"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="29" Y="18"/>
-        <UsageCount Value="18"/>
-      </Unit17>
-      <Unit18>
+        <UsageCount Value="17"/>
+      </Unit18>
+      <Unit19>
         <Filename Value="uspectools.pas"/>
         <UnitName Value="USpecTools"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="44" Y="13"/>
-        <UsageCount Value="15"/>
-      </Unit18>
-      <Unit19>
+        <UsageCount Value="14"/>
+      </Unit19>
+      <Unit20>
         <Filename Value="tzoom.pas"/>
         <UnitName Value="UZoom"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="30" Y="24"/>
-        <UsageCount Value="68"/>
-      </Unit19>
-      <Unit20>
+        <UsageCount Value="67"/>
+      </Unit20>
+      <Unit21>
         <Filename Value="unit3.pas"/>
         <UnitName Value="Unit3"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="51" Y="21"/>
-        <UsageCount Value="40"/>
-      </Unit20>
-      <Unit21>
+        <UsageCount Value="39"/>
+      </Unit21>
+      <Unit22>
         <Filename Value="C:\lazarus\lcl\include\rasterimage.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="273"/>
         <CursorPos X="84" Y="282"/>
-        <UsageCount Value="8"/>
-      </Unit21>
-      <Unit22>
-        <Filename Value="C:\lazarus\lcl\include\control.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="3244"/>
-        <CursorPos Y="3270"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit22>
       <Unit23>
-        <Filename Value="C:\lazarus\lcl\include\fpimagebitmap.inc"/>
+        <Filename Value="C:\lazarus\lcl\include\control.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="115"/>
-        <CursorPos Y="141"/>
-        <UsageCount Value="1"/>
+        <TopLine Value="2265"/>
+        <CursorPos Y="2272"/>
+        <UsageCount Value="9"/>
       </Unit23>
       <Unit24>
         <Filename Value="C:\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1603"/>
-        <CursorPos X="14" Y="1629"/>
-        <UsageCount Value="5"/>
+        <TopLine Value="2076"/>
+        <CursorPos X="14" Y="2102"/>
+        <UsageCount Value="9"/>
       </Unit24>
       <Unit25>
-        <Filename Value="C:\lazarus\lcl\include\bitmapcanvas.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2"/>
-        <CursorPos Y="45"/>
-        <UsageCount Value="1"/>
-      </Unit25>
-      <Unit26>
         <Filename Value="mein.lfm"/>
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
@@ -220,453 +218,406 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="15"/>
         <CursorPos X="5" Y="15"/>
-        <UsageCount Value="2"/>
-        <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit26>
-      <Unit27>
-        <Filename Value="..\..\..\AppData\Local\Temp\Rar$DI09.800\peint.lpr"/>
-        <EditorIndex Value="-1"/>
         <UsageCount Value="1"/>
-      </Unit27>
-      <Unit28>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit25>
+      <Unit26>
         <Filename Value="C:\lazarus\lcl\include\wincontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="7734"/>
         <CursorPos X="38" Y="7747"/>
-        <UsageCount Value="9"/>
-      </Unit28>
-      <Unit29>
+        <UsageCount Value="8"/>
+      </Unit26>
+      <Unit27>
         <Filename Value="C:\lazarus\lcl\include\winapi.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="729"/>
         <CursorPos Y="755"/>
-        <UsageCount Value="8"/>
-      </Unit29>
-      <Unit30>
+        <UsageCount Value="7"/>
+      </Unit27>
+      <Unit28>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\win32winapi.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2781"/>
         <CursorPos Y="2807"/>
-        <UsageCount Value="8"/>
-      </Unit30>
-      <Unit31>
-        <Filename Value="C:\lazarus\lcl\include\pen.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="119"/>
-        <CursorPos Y="147"/>
-        <UsageCount Value="1"/>
-      </Unit31>
-      <Unit32>
-        <Filename Value="C:\lazarus\lcl\include\custombitmap.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="454"/>
-        <CursorPos Y="502"/>
-        <UsageCount Value="1"/>
-      </Unit32>
-      <Unit33>
-        <Filename Value="..\..\..\SOLGCO~1\AppData\Local\Temp\Rar$DIa0.607\distortions.lpr"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="47" Y="5"/>
-        <UsageCount Value="1"/>
-      </Unit33>
-      <Unit34>
-        <Filename Value="..\..\..\SOLGCO~1\AppData\Local\Temp\Rar$DIa0.717\lazpaint.lpr"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="60"/>
-        <CursorPos X="90" Y="33"/>
-        <UsageCount Value="1"/>
-      </Unit34>
-      <Unit35>
-        <Filename Value="..\..\..\SOLGCO~1\AppData\Local\Temp\Rar$DIa0.186\lazpaint.lpr"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <UsageCount Value="1"/>
-      </Unit35>
-      <Unit36>
+        <UsageCount Value="7"/>
+      </Unit28>
+      <Unit29>
         <Filename Value="lutils.pas"/>
         <UnitName Value="LUtils"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="11"/>
-        <UsageCount Value="12"/>
-      </Unit36>
-      <Unit37>
-        <Filename Value="C:\lazarus\lcl\include\picture.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="719"/>
-        <CursorPos Y="745"/>
-        <UsageCount Value="1"/>
-      </Unit37>
-      <Unit38>
+        <UsageCount Value="11"/>
+      </Unit29>
+      <Unit30>
         <Filename Value="..\..\..\SOLGCO~1\AppData\Local\Temp\Rar$DIa0.370\ublendop.lfm"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="145"/>
         <CursorPos X="27" Y="26"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit38>
-      <Unit39>
+      </Unit30>
+      <Unit31>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\win32proc.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="720"/>
         <CursorPos Y="746"/>
-        <UsageCount Value="2"/>
-      </Unit39>
-      <Unit40>
+        <UsageCount Value="1"/>
+      </Unit31>
+      <Unit32>
         <Filename Value="C:\lazarus\lcl\include\canvas.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="926"/>
         <CursorPos Y="952"/>
-        <UsageCount Value="8"/>
-      </Unit40>
-      <Unit41>
+        <UsageCount Value="7"/>
+      </Unit32>
+      <Unit33>
         <Filename Value="C:\lazarus\lcl\include\messagedialogs.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="180"/>
         <CursorPos Y="207"/>
-        <UsageCount Value="3"/>
-      </Unit41>
-      <Unit42>
+        <UsageCount Value="2"/>
+      </Unit33>
+      <Unit34>
         <Filename Value="C:\lazarus\components\lazutils\lazlogger.pas"/>
         <UnitName Value="LazLogger"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="737"/>
         <CursorPos Y="763"/>
-        <UsageCount Value="3"/>
-      </Unit42>
-      <Unit43>
+        <UsageCount Value="2"/>
+      </Unit34>
+      <Unit35>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1635"/>
         <CursorPos X="87" Y="1648"/>
-        <UsageCount Value="9"/>
-      </Unit43>
-      <Unit44>
+        <UsageCount Value="8"/>
+      </Unit35>
+      <Unit36>
         <Filename Value="..\Новая папка (2)\Новый текстовый документ.lpr"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <CursorPos X="16"/>
-        <UsageCount Value="4"/>
-      </Unit44>
-      <Unit45>
+        <UsageCount Value="3"/>
+      </Unit36>
+      <Unit37>
         <Filename Value="C:\lazarus\lcl\include\shape.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="19" Y="6"/>
-        <UsageCount Value="5"/>
-      </Unit45>
-      <Unit46>
+        <UsageCount Value="4"/>
+      </Unit37>
+      <Unit38>
         <Filename Value="C:\lazarus\lcl\lclclasses.pp"/>
         <UnitName Value="LCLClasses"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="110"/>
         <CursorPos Y="139"/>
-        <UsageCount Value="4"/>
-      </Unit46>
-      <Unit47>
+        <UsageCount Value="3"/>
+      </Unit38>
+      <Unit39>
         <Filename Value="C:\lazarus\lcl\include\graphiccontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="32"/>
         <CursorPos X="36" Y="40"/>
-        <UsageCount Value="9"/>
-      </Unit47>
-      <Unit48>
+        <UsageCount Value="8"/>
+      </Unit39>
+      <Unit40>
         <Filename Value="C:\lazarus\lcl\include\brush.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="14"/>
         <CursorPos Y="58"/>
-        <UsageCount Value="9"/>
-      </Unit48>
-      <Unit49>
+        <UsageCount Value="8"/>
+      </Unit40>
+      <Unit41>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="710"/>
         <CursorPos X="14" Y="737"/>
-        <UsageCount Value="9"/>
-      </Unit49>
-      <Unit50>
+        <UsageCount Value="8"/>
+      </Unit41>
+      <Unit42>
         <Filename Value="C:\lazarus\lcl\include\imglist.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="341"/>
         <CursorPos Y="367"/>
-        <UsageCount Value="5"/>
-      </Unit50>
-      <Unit51>
+        <UsageCount Value="4"/>
+      </Unit42>
+      <Unit43>
         <Filename Value="..\VMachine\Новый текстовый документ.lpr"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <CursorPos X="10"/>
-        <UsageCount Value="4"/>
-      </Unit51>
-      <Unit52>
+        <UsageCount Value="3"/>
+      </Unit43>
+      <Unit44>
         <Filename Value="..\..\..\SOLGCO~1\AppData\Local\Temp\Rar$DIa0.255\vectorgraphiceditor.lpr"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="4"/>
-      </Unit52>
-      <Unit53>
+        <UsageCount Value="3"/>
+      </Unit44>
+      <Unit45>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\inc\objpash.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="166"/>
         <CursorPos X="38" Y="184"/>
-        <UsageCount Value="10"/>
-      </Unit53>
-      <Unit54>
+        <UsageCount Value="9"/>
+      </Unit45>
+      <Unit46>
         <Filename Value="C:\lazarus\lcl\include\popupmenu.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="40"/>
         <CursorPos Y="66"/>
-        <UsageCount Value="5"/>
-      </Unit54>
-      <Unit55>
+        <UsageCount Value="4"/>
+      </Unit46>
+      <Unit47>
         <Filename Value="C:\lazarus\lcl\include\customlistbox.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="536"/>
         <CursorPos Y="571"/>
-        <UsageCount Value="10"/>
-      </Unit55>
-      <Unit56>
+        <UsageCount Value="9"/>
+      </Unit47>
+      <Unit48>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\win32listsl.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="185"/>
         <CursorPos Y="212"/>
-        <UsageCount Value="5"/>
-      </Unit56>
-      <Unit57>
+        <UsageCount Value="4"/>
+      </Unit48>
+      <Unit49>
         <Filename Value="USVPFormat.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="160"/>
         <CursorPos X="48" Y="100"/>
-        <UsageCount Value="11"/>
-      </Unit57>
-      <Unit58>
+        <UsageCount Value="10"/>
+      </Unit49>
+      <Unit50>
         <Filename Value="UFileAnalization.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="35" Y="19"/>
-        <UsageCount Value="11"/>
-      </Unit58>
-      <Unit59>
+        <UsageCount Value="10"/>
+      </Unit50>
+      <Unit51>
         <Filename Value="UPackUnpack.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="142"/>
         <CursorPos X="11" Y="190"/>
-        <UsageCount Value="11"/>
-      </Unit59>
-      <Unit60>
+        <UsageCount Value="10"/>
+      </Unit51>
+      <Unit52>
         <Filename Value="BitOps.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="12"/>
         <CursorPos X="33" Y="18"/>
-        <UsageCount Value="11"/>
-      </Unit60>
-      <Unit61>
+        <UsageCount Value="10"/>
+      </Unit52>
+      <Unit53>
         <Filename Value="UTree.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2"/>
         <CursorPos X="31" Y="30"/>
-        <UsageCount Value="11"/>
-      </Unit61>
-      <Unit62>
+        <UsageCount Value="10"/>
+      </Unit53>
+      <Unit54>
         <Filename Value="UBitOps.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="12"/>
         <CursorPos X="35" Y="42"/>
-        <UsageCount Value="6"/>
-      </Unit62>
-      <Unit63>
+        <UsageCount Value="5"/>
+      </Unit54>
+      <Unit55>
         <Filename Value="C:\lazarus\lcl\include\customform.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="128"/>
         <CursorPos Y="161"/>
-        <UsageCount Value="9"/>
-      </Unit63>
-      <Unit64>
+        <UsageCount Value="8"/>
+      </Unit55>
+      <Unit56>
         <Filename Value="C:\lazarus\lcl\lclmessageglue.pas"/>
         <UnitName Value="LCLMessageGlue"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="94"/>
         <CursorPos Y="123"/>
-        <UsageCount Value="7"/>
-      </Unit64>
-      <Unit65>
+        <UsageCount Value="6"/>
+      </Unit56>
+      <Unit57>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\win32callback.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2536"/>
         <CursorPos X="30" Y="2542"/>
-        <UsageCount Value="7"/>
-      </Unit65>
-      <Unit66>
+        <UsageCount Value="6"/>
+      </Unit57>
+      <Unit58>
         <Filename Value="C:\lazarus\lcl\stdctrls.pp"/>
         <UnitName Value="StdCtrls"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1129"/>
         <CursorPos X="3" Y="1155"/>
-        <UsageCount Value="8"/>
-      </Unit66>
-      <Unit67>
+        <UsageCount Value="7"/>
+      </Unit58>
+      <Unit59>
         <Filename Value="C:\lazarus\lcl\include\application.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1361"/>
         <CursorPos Y="1387"/>
-        <UsageCount Value="9"/>
-      </Unit67>
-      <Unit68>
+        <UsageCount Value="8"/>
+      </Unit59>
+      <Unit60>
         <Filename Value="C:\lazarus\lcl\include\paintbox.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2"/>
         <CursorPos Y="47"/>
-        <UsageCount Value="9"/>
-      </Unit68>
-      <Unit69>
+        <UsageCount Value="8"/>
+      </Unit60>
+      <Unit61>
         <Filename Value="C:\lazarus\lcl\include\customcontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="80"/>
         <CursorPos X="25" Y="90"/>
-        <UsageCount Value="9"/>
-      </Unit69>
-      <Unit70>
+        <UsageCount Value="8"/>
+      </Unit61>
+      <Unit62>
         <Filename Value="ufigurehistorymanagert.pas"/>
         <UnitName Value="UFigureHistoryMAnagert"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="15" Y="12"/>
-        <UsageCount Value="19"/>
-      </Unit70>
-      <Unit71>
+        <UsageCount Value="18"/>
+      </Unit62>
+      <Unit63>
         <Filename Value="C:\lazarus\lcl\extctrls.pp"/>
         <UnitName Value="ExtCtrls"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1011"/>
         <CursorPos X="58" Y="1023"/>
-        <UsageCount Value="10"/>
-      </Unit71>
-      <Unit72>
+        <UsageCount Value="9"/>
+      </Unit63>
+      <Unit64>
         <Filename Value="UCustomControls.pas"/>
         <EditorIndex Value="8"/>
-        <TopLine Value="96"/>
-        <CursorPos X="84" Y="138"/>
-        <UsageCount Value="14"/>
+        <CursorPos X="70" Y="8"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
-      </Unit72>
+      </Unit64>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="132" Column="43" TopLine="89"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="160" TopLine="124"/>
       </Position1>
       <Position2>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="131" Column="3" TopLine="122"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="161" TopLine="124"/>
       </Position2>
       <Position3>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="132" Column="16" TopLine="106"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="153" Column="12" TopLine="124"/>
       </Position3>
       <Position4>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="187" Column="4" TopLine="154"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="160" TopLine="124"/>
       </Position4>
       <Position5>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="9" Column="35"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="161" TopLine="124"/>
       </Position5>
       <Position6>
-        <Filename Value="ueditpanel.pas"/>
-        <Caret Line="137" Column="42"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="162" TopLine="124"/>
       </Position6>
       <Position7>
-        <Filename Value="ueditpanel.pas"/>
-        <Caret Line="8" Column="101"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="160" TopLine="142"/>
       </Position7>
       <Position8>
-        <Filename Value="ueditpanel.pas"/>
-        <Caret Line="88" Column="41" TopLine="46"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="162" TopLine="142"/>
       </Position8>
       <Position9>
-        <Filename Value="ueditpanel.pas"/>
-        <Caret Line="149" Column="16" TopLine="99"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="160" TopLine="142"/>
       </Position9>
       <Position10>
-        <Filename Value="ueditpanel.pas"/>
-        <Caret Line="83" Column="29" TopLine="59"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="162" TopLine="142"/>
       </Position10>
       <Position11>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="71" Column="48" TopLine="29"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="160" TopLine="142"/>
       </Position11>
       <Position12>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="73" TopLine="31"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="167" TopLine="142"/>
       </Position12>
       <Position13>
-        <Filename Value="ueditpanel.pas"/>
-        <Caret Line="63" Column="41" TopLine="31"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="168" TopLine="142"/>
       </Position13>
       <Position14>
-        <Filename Value="ueditpanel.pas"/>
-        <Caret Line="20" Column="22" TopLine="6"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="172" TopLine="142"/>
       </Position14>
       <Position15>
-        <Filename Value="UTools.pas"/>
-        <Caret Line="124" TopLine="106"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="160" TopLine="130"/>
       </Position15>
       <Position16>
-        <Filename Value="UTools.pas"/>
-        <Caret Line="125" TopLine="106"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="167" Column="19" TopLine="130"/>
       </Position16>
       <Position17>
         <Filename Value="UHistory.pas"/>
-        <Caret Line="65" Column="19" TopLine="34"/>
+        <Caret Line="169" Column="20" TopLine="144"/>
       </Position17>
       <Position18>
         <Filename Value="UHistory.pas"/>
-        <Caret Line="61" Column="20" TopLine="43"/>
+        <Caret Line="160" TopLine="144"/>
       </Position18>
       <Position19>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="39" Column="3" TopLine="10"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="149" TopLine="144"/>
       </Position19>
       <Position20>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="41" Column="4" TopLine="15"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="167" Column="17" TopLine="144"/>
       </Position20>
       <Position21>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="21" Column="42"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="160" TopLine="144"/>
       </Position21>
       <Position22>
-        <Filename Value="UCustomControls.pas"/>
-        <Caret Line="82" Column="33" TopLine="66"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="124" TopLine="93"/>
       </Position22>
       <Position23>
-        <Filename Value="ueditpanel.pas"/>
-        <Caret Line="57" Column="59" TopLine="30"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="125" TopLine="93"/>
       </Position23>
       <Position24>
-        <Filename Value="UFigureHistoryManager.pas"/>
-        <Caret Line="35" Column="40" TopLine="9"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="92" Column="52" TopLine="60"/>
       </Position24>
       <Position25>
-        <Filename Value="UMain.pas"/>
-        <Caret Line="53" Column="41" TopLine="13"/>
+        <Filename Value="UHistory.pas"/>
+        <Caret Line="143" Column="5" TopLine="128"/>
       </Position25>
       <Position26>
-        <Filename Value="UMain.pas"/>
-        <Caret Line="51" Column="18" TopLine="24"/>
+        <Filename Value="UFigureHistoryManager.pas"/>
+        <Caret Line="22" Column="37" TopLine="22"/>
       </Position26>
       <Position27>
-        <Filename Value="UMain.pas"/>
-        <Caret Line="138" Column="16" TopLine="131"/>
+        <Filename Value="UFigureHistoryManager.pas"/>
+        <Caret Line="72" TopLine="23"/>
       </Position27>
       <Position28>
-        <Filename Value="UMain.pas"/>
-        <Caret Line="143" Column="26" TopLine="117"/>
+        <Filename Value="UFigureHistoryManager.pas"/>
+        <Caret Line="73" Column="17" TopLine="23"/>
       </Position28>
       <Position29>
-        <Filename Value="UMain.pas"/>
-        <Caret Line="144" Column="48" TopLine="118"/>
+        <Filename Value="UFigureHistoryManager.pas"/>
+        <Caret Line="17" Column="50"/>
       </Position29>
       <Position30>
-        <Filename Value="UMainSceneUtils.pas"/>
-        <Caret Line="66" Column="29" TopLine="23"/>
+        <Filename Value="UFigureHistoryManager.pas"/>
+        <Caret Line="42" Column="33" TopLine="14"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

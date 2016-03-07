@@ -10,7 +10,7 @@ uses
 type
   ToolClass = class of TTool;
 
-  Tool_ = record
+  ATool = record
     Recreate: boolean;
     Tool: ToolClass;
     Name: string;
@@ -57,8 +57,14 @@ type
   end;
 
   TZoomTool = class(TTool)
-  public
     procedure Start(Point: TPoint; MButton: TMouseButton); override;
+  end;
+
+  TSelectTool = class(TPaintingTool)
+    constructor Create(Scene: TCanvas); override;
+    procedure Start(Point: TPoint; MButton: TMouseButton); override;
+    procedure Continue(Point: TPoint; Shift: TShiftState); override;
+    procedure Stop; override;
   end;
 
   THandTool = class(TTool)
@@ -72,7 +78,7 @@ type
   end;
 
 var
-  Tools: array of Tool_;
+  Tools: array of ATool;
   Tool: TTool;
   CurrentToolIndex: integer;
 
@@ -97,6 +103,7 @@ end;
 
 procedure TPaintingTool.Start(Point: TPoint; MButton: TMouseButton);
 begin
+  History.Deselect;
   Figure.Add(Zoom.ToGlobal(Point));
   History.Insert(Figure);
 end;
@@ -122,6 +129,7 @@ end;
 
 procedure TPolyLineTool.Start(Point: TPoint; MButton: TMouseButton);
 begin
+  History.Deselect;
   Figure.Add(Zoom.ToGlobal(Point));
   History.ReplaceLast(Figure);
 end;
@@ -157,6 +165,31 @@ begin
     Zoom.ZoomOut;
 end;
 
+constructor TSelectTool.Create(Scene: TCanvas);
+begin
+  inherited Create(Scene);
+  Figure := TRectangle.Create(Scene, 'Selection tool');
+end;
+
+procedure TSelectTool.Start(Point: TPoint; MButton: TMouseButton);
+begin
+  inherited Start(Point, MButton);
+  Figure.BrushStyle := bsClear;
+  Figure.PenColor := clRed;
+  Figure.PenWidth := 2;
+end;
+
+procedure TSelectTool.Continue(Point: TPoint; Shift: TShiftState);
+begin
+  inherited Continue(Point, Shift);
+  History.SelectFiguresInRect(Figure.GetMinPoint, Figure.GetMaxPoint);
+end;
+
+procedure TSelectTool.Stop;
+begin
+  History.DeleteLastFigure;
+end;
+
 procedure THandTool.Start(Point: TPoint; MButton: TMouseButton);
 begin
   PreviousScreenLocation := Zoom.GetPrevScreenLocation;
@@ -179,12 +212,13 @@ end;
 
 initialization
 
-  InitTool(TPenTool, True,'Pen');
-  InitTool(TPolyLineTool, False,'Poly line');
-  InitTool(TLineTool, True,'Line');
-  InitTool(TRectangleTool, True,'Rectangle');
-  InitTool(TEllipseTool, True,'Ellipse');
-  InitTool(TZoomTool, True,'Zoom');
-  InitTool(THandTool, True,'Hand');
+  InitTool(TPenTool, True, 'Pen');
+  InitTool(TPolyLineTool, False, 'Poly line');
+  InitTool(TLineTool, True, 'Line');
+  InitTool(TRectangleTool, True, 'Rectangle');
+  InitTool(TEllipseTool, True, 'Ellipse');
+  InitTool(TZoomTool, True, 'Zoom');
+  InitTool(TSelectTool, True, 'Selection tool');
+  InitTool(THandTool, True, 'Hand');
 
 end.

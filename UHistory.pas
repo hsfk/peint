@@ -5,7 +5,7 @@ unit UHistory;
 interface
 
 uses
-  Classes, SysUtils, UFigure, Graphics, UMainSceneUtils;
+  Classes, SysUtils, UFigure, Graphics, UMainSceneUtils, UPointUtils;
 
 type
   Nodeptr = ^Node;
@@ -24,10 +24,15 @@ type
     procedure Show;
     procedure Undo;
     procedure Redo;
-    function DataLength : Integer;
-    function GetFigure(Index : Integer) : TFigure;
+    function DataLength: integer;
+    function GetFigure(Index: integer): TFigure;
+    procedure Select(Index: integer);
+    procedure SelectFiguresInRect(AMinPoint, AMaxPoint: TPoint);
+    procedure Deselect;
+    procedure DeleteLastFigure;
   private
-    HistoryPosition: Nodeptr;
+    FHighLightedFigures: array of integer;
+    FHistoryPosition: Nodeptr;
     FScene: TCanvas;
     FHead: Nodeptr;
     FTail: Nodeptr;
@@ -52,26 +57,26 @@ begin
   FTail^.Next := nil;
   FHead^.Next := FTail;
   FTail^.Prev := FHead;
-  HistoryPosition := FHead;
+  FHistoryPosition := FHead;
 end;
 
 procedure THistory.ReplaceLast(Figure: TFigure);
 begin
-  HistoryPosition^.Data[High(HistoryPosition^.Data)] := Figure;
+  FHistoryPosition^.Data[High(FHistoryPosition^.Data)] := Figure;
 end;
 
 procedure THistory.Insert(Figure: TFigure);
 begin
-  if HistoryPosition = FHead then begin
+  if FHistoryPosition = FHead then begin
     PushBack(NewNode(Figure));
-    HistoryPosition := HistoryPosition^.Next;
+    FHistoryPosition := FHistoryPosition^.Next;
     exit;
   end;
-  while HistoryPosition^.Next <> FTail do
-    Delete(HistoryPosition^.Next);
+  while FHistoryPosition^.Next <> FTail do
+    Delete(FHistoryPosition^.Next);
   CopyLastAction;
-  HistoryPosition := HistoryPosition^.Next;
-  SetLength(HistoryPosition^.Data, Length(HistoryPosition^.Data) + 1);
+  FHistoryPosition := FHistoryPosition^.Next;
+  SetLength(FHistoryPosition^.Data, Length(FHistoryPosition^.Data) + 1);
   ReplaceLast(Figure);
 end;
 
@@ -80,59 +85,95 @@ var
   i: integer;
 begin
   MainSceneUtils.ClearScene;
-  if HistoryPosition <> FHead then
-    for i := 0 to Length(HistoryPosition^.Data) - 1 do
-      HistoryPosition^.Data[i].Draw;
+  if Length(FHighLightedFigures) > 0 then
+    for i := 0 to Length(FHighLightedFigures) - 1 do
+      FHistoryPosition^.Data[FHighLightedFigures[i]].HighLight;
+  if FHistoryPosition <> FHead then
+    for i := 0 to Length(FHistoryPosition^.Data) - 1 do
+      FHistoryPosition^.Data[i].Draw;
 end;
 
 procedure THistory.Undo;
 begin
-  if HistoryPosition^.Prev <> FHead then
-    HistoryPosition := HistoryPosition^.Prev;
+  if FHistoryPosition^.Prev <> FHead then
+    FHistoryPosition := FHistoryPosition^.Prev;
   Show;
 end;
 
 procedure THistory.Redo;
 begin
-  if HistoryPosition^.Next <> FTail then
-    HistoryPosition := HistoryPosition^.Next;
+  if FHistoryPosition^.Next <> FTail then
+    FHistoryPosition := FHistoryPosition^.Next;
   Show;
 end;
 
-function THistory.DataLength : Integer;
+function THistory.DataLength: integer;
 begin
-  Result := Length(HistoryPosition^.Data);
+  Result := Length(FHistoryPosition^.Data);
 end;
 
-function THistory.GetFigure(Index : Integer) : TFigure;
+function THistory.GetFigure(Index: integer): TFigure;
 begin
-  Result := HistoryPosition^.Data[Index];
+  Result := FHistoryPosition^.Data[Index];
+end;
+
+procedure THistory.Select(Index: integer);
+begin
+  SetLength(FHighLightedFigures, Length(FHighLightedFigures) + 1);
+  FHighLightedFigures[High(FHighLightedFigures)] := Index;
+end;
+
+procedure THistory.SelectFiguresInRect(AMinPoint, AMaxPoint: TPoint);
+var
+  i: integer;
+  MaxPoint: TPoint;
+  MinPoint: TPoint;
+begin
+  Deselect;
+  if Length(FHistoryPosition^.Data) = 1 then
+    Exit;
+  for i := Length(FHistoryPosition^.Data) - 2 downto 0 do begin
+    MaxPoint := FHistoryPosition^.Data[i].GetMaxPoint;
+    MinPoint := FHistoryPosition^.Data[i].GetMinPoint;
+    if IsIntersect(AMinPoint, AMaxPoint, MaxPoint, MinPoint) then
+      Select(i);
+  end;
+end;
+
+procedure THistory.Deselect;
+begin
+  SetLength(FHighLightedFigures, 0);
+end;
+
+procedure THistory.DeleteLastFigure;
+begin
+  SetLength(FHistoryPosition^.Data, Length(FHistoryPosition^.Data) - 1);
 end;
 
 procedure THistory.CopyLastAction;
 var
-  tmp: Nodeptr;
+  Temp: Nodeptr;
 begin
-  tmp := FTail^.Prev;
-  tmp := CopyNode(tmp);
-  PushBack(tmp);
+  Temp := FTail^.Prev;
+  Temp := CopyNode(Temp);
+  PushBack(Temp);
 end;
 
 procedure THistory.PushBack(Node: Nodeptr);
 var
-  tmp: Nodeptr;
+  Temp: Nodeptr;
 begin
-  tmp := FTail^.Prev;
+  Temp := FTail^.Prev;
   FTail^.Prev := Node;
   Node^.Next := FTail;
-  Node^.Prev := tmp;
-  tmp^.Next := Node;
+  Node^.Prev := Temp;
+  Temp^.Next := Node;
 end;
 
 procedure THistory.Delete(Node: Nodeptr);
 begin
   if (Node = FHead) or (Node = FTail) then
-    exit;
+    Exit;
   Node^.Prev^.Next := Node^.Next;
   Node^.Next^.Prev := Node^.Prev;
   SetLength(Node^.Data, 0);

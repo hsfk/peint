@@ -15,10 +15,9 @@ type
     constructor Create(AParent: TComponent; ATop, ALeft: integer);
     procedure LoadHistory;
   private
-    FEditPanel: TEditPanel;
+    FEditPanel: TFigureEdit;
     FListBox: TListBox;
-    procedure ListBoxMouseDownEvent(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: integer);
+    procedure SelectionChangeEvent(Sender: TObject; User: boolean);
   end;
 
 implementation
@@ -31,15 +30,16 @@ begin
   Self.OnMouseUp := @PanelMove.OnMouseUp;
   Self.BevelInner := bvRaised;
   Self.BevelOuter := bvLowered;
-  FEditPanel := TEditPanel.Create(Self);
+  FEditPanel := TFigureEdit.Create(Self, 280, 5);
   FListBox := TListBox.Create(Self);
+  FListBox.OnSelectionChange := @SelectionChangeEvent;
+  FListBox.MultiSelect := True;
   with FListBox do begin
     Width := 152;
     Height := 255;
     Left := 1;
     Top := 20;
     Parent := TWinControl(Self);
-    OnMouseDown := @ListBoxMouseDownEvent;
   end;
 end;
 
@@ -52,13 +52,17 @@ begin
     FlistBox.Items.Add(History.GetFigure(i).Name);
 end;
 
-procedure TFigureHistoryManager.ListBoxMouseDownEvent(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+procedure TFigureHistoryManager.SelectionChangeEvent(Sender: TObject; User: boolean);
+var
+  i: integer;
 begin
-  if FListBox.ItemIndex <> -1 then begin
-    FEditPanel.LoadFigure(History.GetFigure(FListBox.ItemIndex));
-    History.GetFigure(FListBox.ItemIndex).HighLight;
-  end;
+  History.Deselect;
+  for i := 0 to FListBox.Items.Count - 1 do
+    if FListBox.Selected[i] = True then begin
+      History.Select(i);
+      FEditPanel.LoadFigure(History.GetFigure(i));
+    end;
+  History.Show;
 end;
 
 end.
