@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, ExtCtrls,
-  StdCtrls, Dialogs, UCustomControls, UObjectMove, UTools, UCustomPaletteControls;
+  StdCtrls, Dialogs, UCustomControls, UObjectMove, UCustomPaletteControls;
 
 type
 
@@ -14,7 +14,7 @@ type
   public
     constructor Create(Scene: TCanvas; AParent: TComponent; ATop, ALeft: integer);
     procedure LoadToolState;
-    procedure CurrentToolInvalidate;
+    procedure SetCurrentTool(AName: string);
   private
     FCurrentTool: TLabel;
     FScene: TCanvas;
@@ -58,8 +58,8 @@ begin
   Randomize;
   for i := 0 to 9 do
     for j := 0 to 12 do
-      ColorShape := TRandomShape.Create(Self, 88 + i * 11, 5 + j * 11,
-        @DblClickEvent, @MouseDownEvent);
+      ColorShape := TRandomShape.Create(Self, 88 + i * 11, 5 + j *
+        11, @DblClickEvent, @MouseDownEvent);
 
   FToolShapes := TToolShapes.Create(Self, 20, 5);
   FPWidthEdit := TWidthEdit.Create(Self, 15, 105);
@@ -80,9 +80,9 @@ begin
   FScene.Brush.Style := FBStylesCbox.Style;
 end;
 
-procedure TPalette.CurrentToolInvalidate;
+procedure TPalette.SetCurrentTool(AName: string);
 begin
-  FCurrentTool.Caption := Tools[CurrentToolIndex].Name;
+  FCurrentTool.Caption := AName;
 end;
 
 procedure TPalette.ExtButtonClickEvent(Sender: TObject);

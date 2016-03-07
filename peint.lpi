@@ -94,9 +94,8 @@
         <IsPartOfProject Value="True"/>
       </Unit13>
       <Unit14>
-        <Filename Value="ucustompalettecontrols.pas"/>
+        <Filename Value="UCustomPaletteControls.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UCustomPaletteControls"/>
       </Unit14>
     </Units>
   </ProjectOptions>

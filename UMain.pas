@@ -109,10 +109,7 @@ end;
 
 procedure TMainForm.FMainScenePaint(Sender: TObject);
 begin
-  Palette.LoadToolState;
-  MainSceneUtils.SaveToolState;
   History.Show;
-  MainSceneUtils.LoadToolState;
 end;
 
 procedure TMainForm.UndoClick(Sender: TObject);

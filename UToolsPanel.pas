@@ -46,7 +46,7 @@ procedure TToolsPanel.ToolClickEvent(Sender: TObject);
 begin
   CurrentToolIndex := TButton(Sender).tag;
   Tool := Tools[CurrentToolIndex].Tool.Create(FScene);
-  Palette.CurrentToolInvalidate;
+  Palette.SetCurrentTool(Tools[CurrentToolIndex].Name);
 end;
 
 end.

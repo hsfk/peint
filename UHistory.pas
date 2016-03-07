@@ -24,6 +24,10 @@ type
     procedure Show;
     procedure Undo;
     procedure Redo;
+    procedure MoveUp(Index: integer);
+    procedure MoveDown(Index: integer);
+    procedure DeleteSelected;
+    procedure DeleteFigure(Index: integer);
     function DataLength: integer;
     function GetFigure(Index: integer): TFigure;
     procedure Select(Index: integer);
@@ -31,14 +35,14 @@ type
     procedure Deselect;
     procedure DeleteLastFigure;
   private
-    FHighLightedFigures: array of integer;
+    FSelectedFigures: array of integer;
     FHistoryPosition: Nodeptr;
     FScene: TCanvas;
     FHead: Nodeptr;
     FTail: Nodeptr;
     procedure CopyLastAction;
     procedure PushBack(Node: Nodeptr);
-    procedure Delete(Node: Nodeptr);
+    procedure DeleteNode(Node: Nodeptr);
     function CopyNode(Node: Nodeptr): Nodeptr;
     function NewNode(Figure: TFigure): Nodeptr;
   end;
@@ -62,7 +66,7 @@ end;
 
 procedure THistory.ReplaceLast(Figure: TFigure);
 begin
-  FHistoryPosition^.Data[High(FHistoryPosition^.Data)] := Figure;
+  FHistoryPosition^.Data[DataLength - 1] := Figure;
 end;
 
 procedure THistory.Insert(Figure: TFigure);
@@ -73,10 +77,10 @@ begin
     exit;
   end;
   while FHistoryPosition^.Next <> FTail do
-    Delete(FHistoryPosition^.Next);
+    DeleteNode(FHistoryPosition^.Next);
   CopyLastAction;
   FHistoryPosition := FHistoryPosition^.Next;
-  SetLength(FHistoryPosition^.Data, Length(FHistoryPosition^.Data) + 1);
+  SetLength(FHistoryPosition^.Data, DataLength + 1);
   ReplaceLast(Figure);
 end;
 
@@ -85,12 +89,12 @@ var
   i: integer;
 begin
   MainSceneUtils.ClearScene;
-  if Length(FHighLightedFigures) > 0 then
-    for i := 0 to Length(FHighLightedFigures) - 1 do
-      FHistoryPosition^.Data[FHighLightedFigures[i]].HighLight;
   if FHistoryPosition <> FHead then
     for i := 0 to Length(FHistoryPosition^.Data) - 1 do
       FHistoryPosition^.Data[i].Draw;
+  if Length(FSelectedFigures) > 0 then
+    for i := 0 to Length(FSelectedFigures) - 1 do
+      GetFigure(FSelectedFigures[i]).HighLight;
 end;
 
 procedure THistory.Undo;
@@ -107,6 +111,53 @@ begin
   Show;
 end;
 
+procedure THistory.MoveUp(Index: integer);
+var
+  Temp: TFigure;
+begin
+  if Index = 0 then
+    Exit;
+  Temp := GetFigure(Index - 1);
+  FHistoryPosition^.Data[Index - 1] := GetFigure(Index);
+  FHistoryPosition^.Data[Index] := Temp;
+  Show;
+end;
+
+procedure THistory.MoveDown(Index: integer);
+var
+  Temp: TFigure;
+begin
+  if Index = DataLength - 1 then
+    Exit;
+  Temp := GetFigure(Index + 1);
+  FHistoryPosition^.Data[Index + 1] := GetFigure(Index);
+  FHistoryPosition^.Data[Index] := Temp;
+  Show;
+end;
+
+procedure THistory.DeleteSelected;
+var
+  i: integer;
+begin
+  if Length(FSelectedFigures) = 0 then
+    Exit;
+  for i := 0 to Length(FSelectedFigures) - 1 do
+    DeleteFigure(FSelectedFigures[i]);
+  Deselect;
+  Show;
+end;
+
+procedure THistory.DeleteFigure(Index: integer);
+var
+  i: integer;
+begin
+  CopyLastAction;
+  FHistoryPosition := FHistoryPosition^.Next;
+  for i := Index to DataLength - 2 do
+    FHistoryPosition^.Data[i] := GetFigure(i + 1);
+  SetLength(FHistoryPosition^.Data, DataLength - 1);
+end;
+
 function THistory.DataLength: integer;
 begin
   Result := Length(FHistoryPosition^.Data);
@@ -119,8 +170,8 @@ end;
 
 procedure THistory.Select(Index: integer);
 begin
-  SetLength(FHighLightedFigures, Length(FHighLightedFigures) + 1);
-  FHighLightedFigures[High(FHighLightedFigures)] := Index;
+  SetLength(FSelectedFigures, Length(FSelectedFigures) + 1);
+  FSelectedFigures[High(FSelectedFigures)] := Index;
 end;
 
 procedure THistory.SelectFiguresInRect(AMinPoint, AMaxPoint: TPoint);
@@ -130,11 +181,11 @@ var
   MinPoint: TPoint;
 begin
   Deselect;
-  if Length(FHistoryPosition^.Data) = 1 then
+  if DataLength = 1 then
     Exit;
-  for i := Length(FHistoryPosition^.Data) - 2 downto 0 do begin
-    MaxPoint := FHistoryPosition^.Data[i].GetMaxPoint;
-    MinPoint := FHistoryPosition^.Data[i].GetMinPoint;
+  for i := DataLength - 2 downto 0 do begin
+    MaxPoint := GetFigure(i).GetMaxPoint;
+    MinPoint := GetFigure(i).GetMinPoint;
     if IsIntersect(AMinPoint, AMaxPoint, MaxPoint, MinPoint) then
       Select(i);
   end;
@@ -142,12 +193,12 @@ end;
 
 procedure THistory.Deselect;
 begin
-  SetLength(FHighLightedFigures, 0);
+  SetLength(FSelectedFigures, 0);
 end;
 
 procedure THistory.DeleteLastFigure;
 begin
-  SetLength(FHistoryPosition^.Data, Length(FHistoryPosition^.Data) - 1);
+  SetLength(FHistoryPosition^.Data, DataLength - 1);
 end;
 
 procedure THistory.CopyLastAction;
@@ -170,7 +221,7 @@ begin
   Temp^.Next := Node;
 end;
 
-procedure THistory.Delete(Node: Nodeptr);
+procedure THistory.DeleteNode(Node: Nodeptr);
 begin
   if (Node = FHead) or (Node = FTail) then
     Exit;

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, UCustomControls, UFigure, Graphics, Controls,
-  UObjectMove, StdCtrls, Dialogs, ExtCtrls, UHistory, UCustomPaletteControls;
+  UObjectMove, StdCtrls, Dialogs, ExtCtrls, UHistory, UCustomPaletteControls, UPalette;
 
 type
   TFigureEdit = class
@@ -14,6 +14,7 @@ type
     constructor Create(AParent: TComponent; ATop, ALeft: integer);
     procedure LoadFigure(Figure: TFigure);
   private
+    FIsLoaded: boolean;
     FParent: TComponent;
     FFigure: TFigure;
     FToolShapes: TToolShapes;
@@ -31,8 +32,9 @@ implementation
 
 constructor TFigureEdit.Create(AParent: TComponent; ATop, ALeft: integer);
 begin
+  FIsLoaded := False;
   FParent := AParent;
-  FToolShapes := TToolShapes.Create(AParent, ATop, ALeft + 102);
+  FToolShapes := TToolShapes.Create(AParent, ATop, ALeft + 100);
   FToolShapes.FPenShape.OnMouseDown := @PenShapeMouseDownEvent;
   FToolShapes.FBrushShape.OnMouseDown := @BrushShapeMouseDownEvent;
   FBStylesCbox := TBrushStylesCBox.Create(AParent, ATop, ALeft);
@@ -43,6 +45,7 @@ end;
 
 procedure TFigureEdit.LoadFigure(Figure: TFigure);
 begin
+  FIsLoaded := True;
   FFigure := Figure;
   FPWidthEdit.Width := FFigure.PenWidth;
   FToolShapes.PenColor := FFigure.PenColor;
@@ -57,8 +60,11 @@ end;
 
 procedure TFigureEdit.PWidthEditChangeEvent(Sender: TObject);
 begin
-  FFigure.PenWidth := FPWidthEdit.Width;
-  History.Show;
+  if FIsLoaded = True then begin
+    FFigure.PenWidth := FPWidthEdit.Width;
+    History.Show;
+    Palette.LoadToolState;
+  end;
 end;
 
 procedure TFigureEdit.PenShapeMouseDownEvent(Sender: TObject;
