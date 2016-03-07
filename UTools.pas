@@ -5,7 +5,7 @@ unit UTools;
 interface
 
 uses
-  Classes, SysUtils, UFigure, Graphics, UHistory, UZoom, Controls, UPointUtils,UPalette;
+  Classes, SysUtils, UFigure, Graphics, UHistory, UZoom, Controls, UPointUtils, UPalette;
 
 type
   ToolClass = class of TTool;
@@ -130,6 +130,7 @@ end;
 
 procedure TPolyLineTool.Start(Point: TPoint; MButton: TMouseButton);
 begin
+  Palette.LoadToolState;
   History.Deselect;
   Figure.Add(Zoom.ToGlobal(Point));
   History.ReplaceLast(Figure);
