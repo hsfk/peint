@@ -36,6 +36,8 @@ type
     constructor Create(Scene: TCanvas); override;
     procedure Start(Point: TPoint; MButton: TMouseButton); override;
     procedure Continue(Point: TPoint; Shift: TShiftState); override;
+  private
+    FIsInserted: boolean;
   end;
 
   TLineTool = class(TPaintingTool)
@@ -114,6 +116,7 @@ constructor TPolyLineTool.Create(Scene: TCanvas);
 begin
   inherited Create(Scene);
   Figure := TPolyLine.Create(Scene, 'Poly line');
+  FIsInserted := False;
 end;
 
 procedure TPolyLineTool.Start(Point: TPoint; MButton: TMouseButton);
@@ -121,6 +124,10 @@ begin
   Palette.LoadToolState;
   History.Deselect;
   Figure.Add(Zoom.ToGlobal(Point));
+  if FIsInserted = False then begin
+    History.Insert(Figure);
+    FIsInserted := True;
+  end;
   History.ReplaceLast(Figure);
 end;
 

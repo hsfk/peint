@@ -5,7 +5,7 @@ unit UHistory;
 interface
 
 uses
-  Classes, SysUtils, UFigure, Graphics, UMainSceneUtils, UPointUtils;
+  Classes, SysUtils, UFigure, Graphics, USceneUtils, UPointUtils;
 
 type
   Nodeptr = ^Node;
@@ -22,10 +22,12 @@ type
     procedure ReplaceLast(Figure: TFigure);
     procedure Insert(Figure: TFigure);
     procedure Show;
+    procedure ShowFigures(Scene: TCanvas);
     procedure Undo;
     procedure Redo;
     procedure MoveUp(Index: integer);
     procedure MoveDown(Index: integer);
+    procedure DeleteAll;
     procedure DeleteSelected;
     procedure DeleteFigure(Index: integer);
     function DataLength: integer;
@@ -67,7 +69,7 @@ end;
 procedure THistory.ReplaceLast(Figure: TFigure);
 begin
   if FHistoryPosition = FHead then
-     Insert(Figure);
+    Insert(Figure);
   if DataLength = 0 then
     SetLength(FHistoryPosition^.Data, 1);
   FHistoryPosition^.Data[DataLength - 1] := Figure;
@@ -92,13 +94,20 @@ procedure THistory.Show;
 var
   i: integer;
 begin
-  MainSceneUtils.ClearScene;
-  if FHistoryPosition <> FHead then
-    for i := 0 to Length(FHistoryPosition^.Data) - 1 do
-      FHistoryPosition^.Data[i].Draw;
+  SceneUtils.ClearMainScene;
+  ShowFigures(FScene);
   if Length(FSelectedFigures) > 0 then
     for i := 0 to Length(FSelectedFigures) - 1 do
       GetFigure(FSelectedFigures[i]).HighLight;
+end;
+
+procedure THistory.ShowFigures(Scene: TCanvas);
+var
+  i: integer;
+begin
+  if FHistoryPosition <> FHead then
+    for i := 0 to Length(FHistoryPosition^.Data) - 1 do
+      FHistoryPosition^.Data[i].Draw(Scene);
 end;
 
 procedure THistory.Undo;
@@ -137,6 +146,13 @@ begin
   FHistoryPosition^.Data[Index + 1] := GetFigure(Index);
   FHistoryPosition^.Data[Index] := Temp;
   Show;
+end;
+
+procedure THistory.DeleteAll;
+begin
+  FHistoryPosition := FHead;
+  while FHead^.Next <> FTail do
+    DeleteNode(FHead^.Next);
 end;
 
 procedure THistory.DeleteSelected;

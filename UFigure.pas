@@ -5,22 +5,24 @@ unit UFigure;
 interface
 
 uses
-  Classes, SysUtils, Graphics, UZoom, UPointUtils, UMainSceneUtils;
+  Classes, SysUtils, Graphics, UZoom, UPointUtils, USceneUtils;
 
 type
 
   TFigure = class
   public
     constructor Create(Scene: TCanvas; ToolName: string);
-    procedure Draw; virtual; abstract;
+    procedure Draw(Scene: TCanvas); virtual; abstract;
     procedure HighLight;
     procedure Add(Point: TPoint); virtual; abstract;
     function CopyFigure(Figure: TFigure): TFigure;
+
     function GetMaxPoint: TPoint;
     function GetMinPoint: TPoint;
+    function GetPoint(Index: integer): TPoint;
   private
     FName: string;
-    FScene: TCanvas;
+    FMainScene: TCanvas;
     FPoints: TPoints;
     FMinPoint: TPoint; { Кеширование мин\макс точек для быстрого подсвечивания }
     FMaxPoint: TPoint;
@@ -30,7 +32,8 @@ type
     FBrushStyle: TBrushStyle;
     FBrushColor: TColor;
     procedure SaveToolState;
-    procedure LoadToolState;
+    procedure LoadToolState(Scene: TCanvas);
+    function GetDataLength: longword;
   published
     property Name: string read FName write FName;
     property PenWidth: integer read FPenWidth write FPenWidth;
@@ -38,6 +41,7 @@ type
     property PenColor: TColor read FPenColor write FPenColor;
     property BrushStyle: TBrushStyle read FBrushStyle write FBrushStyle;
     property BrushColor: TColor read FBrushColor write FBrushColor;
+    property DataLength: longword read GetDataLength;
   end;
 
   TTwoPointFigure = class(TFigure)
@@ -47,30 +51,30 @@ type
 
   TPolyLine = class(TFigure)
   public
-    procedure Draw; override;
+    procedure Draw(Scene: TCanvas); override;
     procedure Add(Point: TPoint); override;
   end;
 
   TLine = class(TTwoPointFigure)
   public
-    procedure Draw; override;
+    procedure Draw(Scene: TCanvas); override;
   end;
 
   TRectangle = class(TTwoPointFigure)
   public
-    procedure Draw; override;
+    procedure Draw(Scene: TCanvas); override;
   end;
 
   TEllipse = class(TTwoPointFigure)
   public
-    procedure Draw; override;
+    procedure Draw(Scene: TCanvas); override;
   end;
 
 implementation
 
 constructor TFigure.Create(Scene: TCanvas; ToolName: string);
 begin
-  FScene := Scene;
+  FMainScene := Scene;
   FName := ToolName;
   FMinPoint := max;
   FMaxPoint := min;
@@ -78,14 +82,14 @@ end;
 
 procedure TFigure.HighLight;
 begin
-  MainSceneUtils.SaveToolState;
-  MainSceneUtils.SetToolState(2, clRed, psSolid, clWhite, bsClear);
-  FScene.Rectangle(
+  SceneUtils.SaveToolState;
+  SceneUtils.SetToolState(FMainScene, 2, clRed, psSolid, clWhite, bsClear);
+  FMainScene.Rectangle(
     Zoom.ToScene(FMinPoint - PenWidth div 2).x,
     Zoom.ToScene(FMinPoint - PenWidth div 2).y,
     Zoom.ToScene(FMaxPoint + PenWidth div 2).x,
     Zoom.ToScene(FMaxPoint + PenWidth div 2).y);
-  MainSceneUtils.LoadToolState;
+  SceneUtils.LoadToolState;
 end;
 
 function TFigure.CopyFigure(Figure: TFigure): TFigure;
@@ -95,7 +99,7 @@ var
 begin
   ATmpPoint := Figure.FMinPoint;
   BTmpPoint := Figure.FMaxPoint;
-  Result := Figure.Create(FScene, Figure.Name);
+  Result := Figure.Create(FMainScene, Figure.Name);
   Result.FMinPoint := ATmpPoint;
   Result.FMaxPoint := BTmpPoint;
   Result.PenWidth := Figure.FPenWidth;
@@ -115,18 +119,29 @@ begin
   Result := FMaxPoint;
 end;
 
-procedure TFigure.SaveToolState;
+function TFigure.GetPoint(Index: integer): TPoint;
 begin
-  FPenWidth := FScene.Pen.Width;
-  FPenStyle := FScene.Pen.Style;
-  FPenColor := FScene.Pen.Color;
-  FBrushStyle := FScene.Brush.Style;
-  FBrushColor := FScene.Brush.Color;
+  Result := FPoints[Index];
 end;
 
-procedure TFigure.LoadToolState;
+procedure TFigure.SaveToolState;
 begin
-  MainSceneUtils.SetToolState(FPenWidth, FPenColor, FPenStyle, FBrushColor, FBrushStyle);
+  FPenWidth := FMainScene.Pen.Width;
+  FPenStyle := FMainScene.Pen.Style;
+  FPenColor := FMainScene.Pen.Color;
+  FBrushStyle := FMainScene.Brush.Style;
+  FBrushColor := FMainScene.Brush.Color;
+end;
+
+procedure TFigure.LoadToolState(Scene: TCanvas);
+begin
+  SceneUtils.SetToolState(Scene, FPenWidth, FPenColor, FPenStyle,
+    FBrushColor, FBrushStyle);
+end;
+
+function TFigure.GetDataLength: longword;
+begin
+  Result := Length(FPoints);
 end;
 
 procedure TTwoPointFigure.Add(Point: TPoint);
@@ -141,10 +156,10 @@ begin
   FMaxPoint := Point;
 end;
 
-procedure TPolyLine.Draw;
+procedure TPolyLine.Draw(Scene: TCanvas);
 begin
-  LoadToolState;
-  FScene.Polyline(Zoom.ToScene(FPoints));
+  LoadToolState(Scene);
+  Scene.Polyline(Zoom.ToScene(FPoints));
 end;
 
 procedure TPolyLine.Add(Point: TPoint);
@@ -156,26 +171,26 @@ begin
   SaveMax(FMaxPoint, Point);
 end;
 
-procedure TLine.Draw;
+procedure TLine.Draw(Scene: TCanvas);
 begin
-  LoadToolState;
-  FScene.Line(Zoom.ToScene(FPoints[0]), Zoom.ToScene(FPoints[1]));
+  LoadToolState(Scene);
+  Scene.Line(Zoom.ToScene(FPoints[0]), Zoom.ToScene(FPoints[1]));
 end;
 
-procedure TRectangle.Draw;
+procedure TRectangle.Draw(Scene: TCanvas);
 begin
-  LoadToolState;
-  FScene.Rectangle(
+  LoadToolState(Scene);
+  Scene.Rectangle(
     Zoom.ToScene(FPoints[0]).x,
     Zoom.ToScene(FPoints[0]).y,
     Zoom.ToScene(FPoints[1]).x,
     Zoom.ToScene(FPoints[1]).y);
 end;
 
-procedure TEllipse.Draw;
+procedure TEllipse.Draw(Scene: TCanvas);
 begin
-  LoadToolState;
-  FScene.Ellipse(
+  LoadToolState(Scene);
+  Scene.Ellipse(
     Zoom.ToScene(FPoints[0]).x,
     Zoom.ToScene(FPoints[0]).y,
     Zoom.ToScene(FPoints[1]).x,

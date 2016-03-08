@@ -1,12 +1,12 @@
-unit UEditPanel;
+unit UFigureEdit;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, UCustomControls, UFigure, Graphics, Controls,
-  UObjectMove, StdCtrls, Dialogs, ExtCtrls, UHistory, UCustomPaletteControls, UPalette;
+  Classes, SysUtils, UFigure, Graphics, Controls, Dialogs, ExtCtrls,
+  UHistory, UCustomPaletteControls, UPalette;
 
 type
   TFigureEdit = class

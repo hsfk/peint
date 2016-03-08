@@ -30,8 +30,8 @@ object MainForm: TMainForm
     OnPaint = FMainScenePaint
   end
   object MainMenu: TMainMenu
-    left = 888
-    top = 792
+    left = 80
+    top = 8
     object FileItem: TMenuItem
       Caption = 'Файл'
       object OpenAs: TMenuItem
@@ -45,14 +45,6 @@ object MainForm: TMainForm
       object Export: TMenuItem
         Caption = 'Экспортировать'
         OnClick = ExportClick
-      end
-      object ExportToSVP: TMenuItem
-        Caption = 'Экспортировать в ...'
-        OnClick = ExportToSVPClick
-      end
-      object ImportFromSVP: TMenuItem
-        Caption = 'Импортировать из ...'
-        OnClick = ImportFromSVPClick
       end
       object CloseProgram: TMenuItem
         Caption = 'Выход'
@@ -74,8 +66,8 @@ object MainForm: TMainForm
     end
   end
   object ToolsIconList: TImageList
-    left = 840
-    top = 792
+    left = 152
+    top = 8
     Bitmap = {
       4C69080000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls,
-  Menus, UHistory, UCustomControls, UObjectMove, UEditPanel, UToolsPanel;
+  Menus, UHistory, UCustomControls, UObjectMove, UFigureEdit, UToolsPanel;
 
 type
 
