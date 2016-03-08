@@ -91,7 +91,9 @@ procedure TMainForm.FMainSceneMouseUp(Sender: TObject; Button: TMouseButton;
 begin
   if FIsDrawing = True then begin
     ToolsPanel.Tool.Stop;
+    FigureManager.LoadHistory;
     FIsDrawing := False;
+    FMainScene.Invalidate;
   end;
 end;
 

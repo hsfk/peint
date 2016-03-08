@@ -62,6 +62,8 @@ begin
         11, @DblClickEvent, @MouseDownEvent);
 
   FToolShapes := TToolShapes.Create(Self, 20, 5);
+  FToolShapes.FPenShape.OnMouseDown := @PenShapeMouseDownEvent;
+  FToolShapes.FBrushShape.OnMouseDown := @BrushShapeMouseDownEvent;
   FPWidthEdit := TWidthEdit.Create(Self, 15, 105);
   FPWidthEdit.OnChange := @PWidthEditChangeEvent;
   FBStylesCbox := TBrushStylesCBox.Create(Self, 42, 55);

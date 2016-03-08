@@ -110,7 +110,7 @@ begin
   if (FListBox.ItemIndex <> -1) and (FListBox.ItemIndex > 0) then begin
     History.MoveUp(FListBox.ItemIndex);
     FListBox.Items.Move(FListBox.ItemIndex, FListBox.ItemIndex - 1);
-    FListBox.ItemIndex := FListBox.ItemIndex - 1;
+    FListBox.Selected[FListBox.ItemIndex] := True;
     History.Show;
   end;
 end;
@@ -120,8 +120,15 @@ begin
   if (FListBox.ItemIndex <> -1) and (FListBox.ItemIndex < FListBox.Items.Count - 1) then
   begin
     History.MoveDown(FListBox.ItemIndex);
-    FListBox.Items.Move(FListBox.ItemIndex, FListBox.ItemIndex + 1);
-    FListBox.ItemIndex := FListBox.ItemIndex + 1;
+    if FListBox.ItemIndex <> 0 then begin
+      FListBox.Items.Move(FListBox.ItemIndex, FListBox.ItemIndex + 1);
+      FListBox.ItemIndex := FListBox.ItemIndex + 2;
+    end
+    else begin
+      FListBox.Items.Move(FListBox.ItemIndex, FListBox.ItemIndex + 1);
+      FListBox.ItemIndex := FListBox.ItemIndex + 1;
+    end;
+    FListBox.Selected[FListBox.ItemIndex] := True;
     History.Show;
   end;
 end;

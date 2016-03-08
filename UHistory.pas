@@ -219,6 +219,7 @@ end;
 procedure THistory.DeleteLastFigure;
 begin
   SetLength(FHistoryPosition^.Data, DataLength - 1);
+
 end;
 
 procedure THistory.CopyLastAction;
