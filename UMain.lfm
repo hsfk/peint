@@ -1,13 +1,14 @@
 object MainForm: TMainForm
   Left = 237
-  Height = 746
+  Height = 858
   Top = 69
-  Width = 923
+  Width = 1313
   Caption = 'MainForm'
-  ClientHeight = 726
-  ClientWidth = 923
+  ClientHeight = 838
+  ClientWidth = 1313
   Menu = MainMenu
   OnCreate = FormCreate
+  OnResize = FormResize
   LCLVersion = '1.4.4.0'
   object FMainScene: TPaintBox
     AnchorSideLeft.Control = Owner
@@ -16,11 +17,11 @@ object MainForm: TMainForm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 0
+    Left = 195
     Height = 726
-    Top = 0
+    Top = 56
     Width = 923
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Anchors = []
     Color = clWhite
     ParentColor = False
     OnMouseDown = FMainSceneMouseDown
@@ -28,36 +29,9 @@ object MainForm: TMainForm
     OnMouseUp = FMainSceneMouseUp
     OnPaint = FMainScenePaint
   end
-  object ColorDialog: TColorDialog
-    Color = clBlack
-    CustomColors.Strings = (
-      'ColorA=000000'
-      'ColorB=000080'
-      'ColorC=008000'
-      'ColorD=008080'
-      'ColorE=800000'
-      'ColorF=800080'
-      'ColorG=808000'
-      'ColorH=808080'
-      'ColorI=C0C0C0'
-      'ColorJ=0000FF'
-      'ColorK=00FF00'
-      'ColorL=00FFFF'
-      'ColorM=FF0000'
-      'ColorN=FF00FF'
-      'ColorO=FFFF00'
-      'ColorP=FFFFFF'
-      'ColorQ=C0DCC0'
-      'ColorR=F0CAA6'
-      'ColorS=F0FBFF'
-      'ColorT=A4A0A0'
-    )
-    left = 888
-    top = 56
-  end
   object MainMenu: TMainMenu
     left = 888
-    top = 104
+    top = 792
     object FileItem: TMenuItem
       Caption = 'Файл'
       object OpenAs: TMenuItem
@@ -100,8 +74,8 @@ object MainForm: TMainForm
     end
   end
   object ToolsIconList: TImageList
-    left = 848
-    top = 8
+    left = 840
+    top = 792
     Bitmap = {
       4C69080000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF

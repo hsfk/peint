@@ -5,16 +5,10 @@ unit UTools;
 interface
 
 uses
-  Classes, SysUtils, UFigure, Graphics, UHistory, UZoom, Controls, UPointUtils, UPalette;
+  Classes, SysUtils, UFigure, Graphics, UHistory, UZoom, Controls,
+  UPointUtils, UPalette, UScrollBar;
 
 type
-  ToolClass = class of TTool;
-
-  ATool = record
-    Recreate: boolean;
-    Tool: ToolClass;
-    Name: string;
-  end;
 
   TTool = class
   public
@@ -77,11 +71,6 @@ type
     Offset: TPoint;
   end;
 
-var
-  Tools: array of ATool;
-  Tool: TTool;
-  CurrentToolIndex: integer;
-
 implementation
 
 constructor TTool.Create(Scene: TCanvas);
@@ -125,7 +114,6 @@ constructor TPolyLineTool.Create(Scene: TCanvas);
 begin
   inherited Create(Scene);
   Figure := TPolyLine.Create(Scene, 'Poly line');
-  History.Insert(Figure);
 end;
 
 procedure TPolyLineTool.Start(Point: TPoint; MButton: TMouseButton);
@@ -165,6 +153,7 @@ begin
     Zoom.ZoomIn;
   if MButton = mbRight then
     Zoom.ZoomOut;
+  ScrollBar.Update;
 end;
 
 constructor TSelectTool.Create(Scene: TCanvas);
@@ -202,25 +191,7 @@ procedure THandTool.Continue(Point: TPoint; Shift: TShiftState);
 begin
   Offset := Zoom.ToGlobal(Anchor) - Zoom.ToGlobal(Point);
   Zoom.SetPrevScreenLocation(PreviousScreenLocation + Offset);
+  ScrollBar.Update;
 end;
-
-procedure InitTool(Tool: ToolClass; IsRecreatingRequired: boolean; Name: string);
-begin
-  SetLength(Tools, Length(Tools) + 1);
-  Tools[High(Tools)].Tool := Tool;
-  Tools[High(Tools)].Recreate := IsRecreatingRequired;
-  Tools[High(Tools)].Name := Name;
-end;
-
-initialization
-
-  InitTool(TPenTool, True, 'Pen');
-  InitTool(TPolyLineTool, False, 'Poly line');
-  InitTool(TLineTool, True, 'Line');
-  InitTool(TRectangleTool, True, 'Rectangle');
-  InitTool(TEllipseTool, True, 'Ellipse');
-  InitTool(TZoomTool, True, 'Zoom');
-  InitTool(TSelectTool, True, 'Selection tool');
-  InitTool(THandTool, True, 'Hand');
 
 end.

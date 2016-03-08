@@ -66,6 +66,10 @@ end;
 
 procedure THistory.ReplaceLast(Figure: TFigure);
 begin
+  if FHistoryPosition = FHead then
+     Insert(Figure);
+  if DataLength = 0 then
+    SetLength(FHistoryPosition^.Data, 1);
   FHistoryPosition^.Data[DataLength - 1] := Figure;
 end;
 
@@ -74,7 +78,7 @@ begin
   if FHistoryPosition = FHead then begin
     PushBack(NewNode(Figure));
     FHistoryPosition := FHistoryPosition^.Next;
-    exit;
+    Exit;
   end;
   while FHistoryPosition^.Next <> FTail do
     DeleteNode(FHistoryPosition^.Next);

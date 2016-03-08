@@ -58,43 +58,43 @@
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="UScrollBar.pas"/>
+        <Filename Value="UFigureHistoryManager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="UFigureHistoryManager.pas"/>
+        <Filename Value="UFigure.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="UFigure.pas"/>
+        <Filename Value="UHistory.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="UHistory.pas"/>
+        <Filename Value="UZoom.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="UZoom.pas"/>
+        <Filename Value="UPointUtils.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
       <Unit10>
-        <Filename Value="UPointUtils.pas"/>
+        <Filename Value="UTools.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
       <Unit11>
-        <Filename Value="UTools.pas"/>
+        <Filename Value="UMainSceneUtils.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
       <Unit12>
-        <Filename Value="UMainSceneUtils.pas"/>
+        <Filename Value="UEditPanel.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="UEditPanel.pas"/>
+        <Filename Value="UCustomPaletteControls.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit13>
       <Unit14>
-        <Filename Value="UCustomPaletteControls.pas"/>
+        <Filename Value="UScrollBar.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit14>
     </Units>

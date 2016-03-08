@@ -6,16 +6,15 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Buttons, Menus, ExtDlgs, UTools, UPalette,
-  UObjectMove, UToolsPanel, UScrollBar, UFigureHistoryManager,
-  UHistory, UZoom, UPointUtils, UMainSceneUtils;
+  ExtCtrls, Buttons, Menus, ExtDlgs, UPalette,
+  UObjectMove, UToolsPanel, UFigureHistoryManager,
+  UHistory, UZoom, UPointUtils, UMainSceneUtils, UScrollBar;
 
 type
 
   { TMainForm }
 
   TMainForm = class(TForm)
-    ColorDialog: TColorDialog;
     Export: TMenuItem;
     ExportToSvg: TMenuItem;
     ExportToSVP: TMenuItem;
@@ -31,6 +30,7 @@ type
     FMainScene: TPaintBox;
     procedure ExportToSVPClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure ImportFromSVPClick(Sender: TObject);
     procedure FMainSceneMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
@@ -44,15 +44,12 @@ type
     procedure SaveAsClick(Sender: TObject);
     procedure CloseProgramClick(Sender: TObject);
     procedure OpenAsClick(Sender: TObject);
+  private
+    FIsDrawing: boolean;
   end;
 
 var
   MainForm: TMainForm;
-  IsDrawing: boolean;
-  isMoving: boolean;
-  ToolsPanel: TToolsPanel;
-  ScrollBar: TZoomScrollBar;
-  FigureManager: TFigureHistoryManager;
 
 implementation
 
@@ -60,16 +57,14 @@ implementation
 { TMainForm }
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  MainForm.Constraints.MaxHeight := MainForm.Height;
   MainForm.Constraints.MinHeight := MainForm.Height;
-  MainForm.Constraints.MaxWidth := MainForm.Width;
   MainForm.Constraints.MinWidth := MainForm.Width;
+  MainForm.Brush.Color := clDkGray;
 
+  ScrollBar := TZoomScrollBar.Create(Self, FMainScene);
   PanelMove := TObjectMove.Create(MainForm.Width - 15, MainForm.Height - 35);
-  ScrollBar := TZoomScrollBar.Create(self);
   History := THistory.Create(FMainScene.Canvas);
-  Zoom := TZoom.Create(self);
-  Tool := TPenTool.Create(FMainScene.Canvas);
+  Zoom := TZoom.Create(Self, FMainScene);
   MainSceneUtils := TMainSceneUtils.Create(FMainScene.Canvas);
   Palette := TPalette.Create(FMainScene.Canvas, Self, 0, Self.Width - 155 - 15);
   FigureManager := TFigureHistoryManager.Create(Self, Palette.Height, Palette.Left);
@@ -79,11 +74,9 @@ end;
 procedure TMainForm.FMainSceneMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  if Tools[CurrentToolIndex].Recreate = True then
-    Tool := Tools[CurrentToolIndex].Tool.Create(FMainScene.Canvas);
-  Tool.Start(ToPoint(X, Y), Button);
-  IsDrawing := True;
-  ScrollBar.Invalidate;
+  FIsDrawing := True;
+  ToolsPanel.RecreateCurrentTool;
+  ToolsPanel.Tool.Start(ToPoint(X, Y), Button);
   FigureManager.LoadHistory;
   FMainScene.Invalidate;
 end;
@@ -91,19 +84,18 @@ end;
 procedure TMainForm.FMainSceneMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: integer);
 begin
-  if IsDrawing = True then begin
-    Tool.Continue(ToPoint(X, Y), Shift);
+  if FIsDrawing = True then begin
+    ToolsPanel.Tool.Continue(ToPoint(X, Y), Shift);
     FMainScene.Invalidate;
-    ScrollBar.Invalidate;
   end;
 end;
 
 procedure TMainForm.FMainSceneMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  if IsDrawing = True then begin
-    Tool.Stop;
-    IsDrawing := False;
+  if FIsDrawing = True then begin
+    ToolsPanel.Tool.Stop;
+    FIsDrawing := False;
   end;
 end;
 
@@ -126,6 +118,13 @@ begin
   FMainScene.Invalidate;
 end;
 
+procedure TMainForm.FormResize(Sender: TObject);
+begin
+  PanelMove.UpdateBorders(MainForm.Width - 15, MainForm.Height - 35);
+  if Zoom.Value > 0 then
+    Zoom.MainSceneFullScreen;
+end;
+
 procedure TMainForm.SaveAsClick(Sender: TObject);
 var
   SavePictureDialog: TSavePictureDialog;
@@ -133,7 +132,7 @@ begin
   SavePictureDialog := TSavePictureDialog.Create(self);
   SavePictureDialog.Filter := 'Bitmap Picture|*.bmp';
   if SavePictureDialog.Execute then begin
-   // MainSceneUtils.ToBmp(FMainScene.Canvas).SaveToFile(SavePictureDialog.filename);
+    // MainSceneUtils.ToBmp(FMainScene.Canvas).SaveToFile(SavePictureDialog.filename);
   end;
 end;
 

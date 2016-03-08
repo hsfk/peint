@@ -5,8 +5,8 @@ unit UFigureHistoryManager;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls, UTools,
-  Menus, UHistory, UCustomControls, UObjectMove, UEditPanel;
+  Classes, SysUtils, ExtCtrls, Controls, Graphics, StdCtrls,
+  Menus, UHistory, UCustomControls, UObjectMove, UEditPanel, UToolsPanel;
 
 type
 
@@ -28,6 +28,9 @@ type
     procedure FDownButtonClickEvent(Sender: TObject);
     procedure DelButtonClickEvent(Sender: TObject);
   end;
+
+var
+  FigureManager: TFigureHistoryManager;
 
 implementation
 
@@ -126,6 +129,7 @@ end;
 procedure TFigureHistoryManager.DelButtonClickEvent(Sender: TObject);
 begin
   History.DeleteSelected;
+  ToolsPanel.ForceRecreateCurrentTool;
   LoadHistory;
   History.Show;
 end;

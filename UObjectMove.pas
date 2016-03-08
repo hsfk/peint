@@ -9,7 +9,9 @@ uses
 
 type
   TObjectMove = class
+    public
     constructor Create(ABorderWidth, ABorderHeight: integer);
+    procedure UpdateBorders(ABorderWidth, ABorderHeight: integer);
     procedure OnMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure OnMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
@@ -34,6 +36,11 @@ implementation
 constructor TObjectMove.Create(ABorderWidth, ABorderHeight: integer);
 begin
   FIsMoving := False;
+  UpdateBorders(ABorderWidth,ABorderHeight);
+end;
+
+procedure TObjectMove.UpdateBorders(ABorderWidth, ABorderHeight: integer);
+begin
   FBorderWidth := ABorderWidth;
   FBorderHeight := ABorderHeight;
 end;
